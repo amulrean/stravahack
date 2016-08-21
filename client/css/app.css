@@ -1,0 +1,46 @@
+race-home {
+    flex: 1;
+    flex-direction: column;
+}
+
+race-detail {
+    background-color: #cccccc;
+    flex-shrink: 0;
+    height: 240px;
+}
+
+.selectedListItem {
+    background-color: #FFE0B2;
+}
+
+.race-side-bar {
+    background-color: #9E9E9E;
+}
+
+.spinner {
+    position:  relative;
+}
+
+.distance5k {
+    background-color: rgba(0, 170, 229, 0.47)
+}
+
+.distance10k {
+    background-color: #00aae5
+}
+
+.distance10mile {
+    background-color: #3266ff
+}
+
+.distancehalfmarathon {
+    background-color: #ff833e
+}
+
+.distancemarathon {
+    background-color: #ff2e36
+}
+
+.distanceother {
+    background-color: blue
+}

@@ -1,0 +1,15 @@
+
+### Python ###
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# PyCharm
+.idea
+
+# Npm
+node_modules
+
+# Sqlite
+db.sqlite3
