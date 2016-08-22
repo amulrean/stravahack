@@ -19,7 +19,8 @@ from django.contrib import admin
 from rest_framework import routers
 
 from server.views import IndexView
-from server.apps.strava.views import get_authorization_url, strava_authorization, is_authenticated
+from server.apps.strava.views import get_authorization_url, strava_authorization, \
+    is_authenticated, get_athlete_profile, activity_search
 
 router = routers.DefaultRouter()
 
@@ -31,6 +32,8 @@ urlpatterns = [
     url(r'^api/v1/auth-url', get_authorization_url),
     url(r'^api/v1/strava-authorization', strava_authorization),
     url(r'^api/v1/is-authenticated', is_authenticated),
+    url(r'^api/v1/profile', get_athlete_profile),
+    url(r'^api/v1/activity-search', activity_search),
 
     # Django Admin Endpoints
     url(r'^admin/', admin.site.urls),

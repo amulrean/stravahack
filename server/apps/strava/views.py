@@ -2,15 +2,15 @@ from django.http import HttpResponseRedirect
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from stravalib import Client
+from stravalib import Client, unithelper
 from server.settings_secret import MY_STRAVA_CLIENT_ID, MY_STRAVA_CLIENT_SECRET
 
-access_token = None
+client_access_token = None
 
 
 def set_access_token(new_access_token):
-    global access_token
-    access_token = new_access_token
+    global client_access_token
+    client_access_token = new_access_token
 
 @api_view()
 def get_authorization_url(request):
@@ -35,4 +35,46 @@ def strava_authorization(request):
 @api_view()
 def is_authenticated(request):
 
-    return Response(access_token is not None)
+    return Response(client_access_token is not None)
+
+
+@api_view()
+def get_athlete_profile(request):
+    client = Client(client_access_token)
+    profile = client.protocol.get('/athlete')
+    return Response(profile)
+
+
+@api_view()
+def activity_search(request):
+    client = Client(client_access_token)
+
+    activities = client.get_activities(after="2016-07-01T00:00:00Z", limit=10)
+    resp = []
+    for activity in activities:
+
+        stream_types = ['time', 'latlng', 'altitude', 'heartrate', 'temp', ]
+        streams = client.get_activity_streams(activity.id, types=stream_types, resolution='low')
+
+        stream_data = {}
+
+        # Get all available stream types listed above
+        for stream_type in stream_types:
+            if stream_type in streams.keys():
+                stream_data[stream_type] = streams[stream_type].data
+
+        # Distance seems to be a seprate stream
+        if 'distance' in streams.keys():
+            stream_data['distance'] = streams['distance'].data
+
+
+        resp.append({
+            'id': activity.id,
+            'name': activity.name,
+            'moving_time': activity.moving_time,
+            'start_latlng': activity.start_latlng,
+            'stream_data': stream_data,
+        })
+
+
+    return Response(resp)

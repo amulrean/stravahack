@@ -11,9 +11,9 @@
             controller: RaceHomeController
         });
 
-    RaceHomeController.$inject = ['raceService'];
+    RaceHomeController.$inject = ['stravaService'];
 
-    function RaceHomeController(raceService) {
+    function RaceHomeController(stravaService) {
         var ctrl = this;
 
         ctrl.bounderQuery = null;
@@ -29,23 +29,28 @@
         ctrl.endDate = null;
         ctrl.isLoadingList = false;
         ctrl.isLoadingBoundedList = false;
+        ctrl.profile = {};
 
         ctrl.$onInit = function () {
-            // searchRaces();
+            searchActivities();
+
+            stravaService.getProfile()
+                .then(function (data) {
+                    ctrl.profile = data;
+                    return ctrl.profile;
+                });
         };
 
-        function searchRaces() {
+        function searchActivities() {
             ctrl.isLoadingList = true;
-            ctrl.isLoadingBoundedList = true;
-            return raceService.search(
+            return stravaService.searchActivities(
                 ctrl.startDate,
                 ctrl.endDate,
                 ctrl.searchTerm
                 )
                 .then(function (data) {
                     ctrl.isLoadingList = false;
-                    ctrl.raceList = data.hits;
-                    ctrl.raceTotal = data.total;
+                    ctrl.raceList = data;
                     return ctrl.raceList;
                 });
         }
@@ -53,24 +58,24 @@
         function searchBoundedRaces(bounds) {
             ctrl.raceListBounded = [];
             ctrl.raceTotalBounded = 0;
-            ctrl.isLoadingBoundedList = true;
-
-            return raceService.searchBounded(
-                ctrl.startDate,
-                ctrl.endDate,
-                ctrl.searchTerm,
-                bounds
-                )
-                .then(function (data) {
-                    ctrl.raceListBounded = data.hits;
-                    ctrl.raceTotalBounded = data.total;
-                    ctrl.isLoadingBoundedList = false;
-                    return ctrl.raceListBounded;
-                });
+            // ctrl.isLoadingBoundedList = true;
+            //
+            // return raceService.searchBounded(
+            //     ctrl.startDate,
+            //     ctrl.endDate,
+            //     ctrl.searchTerm,
+            //     bounds
+            //     )
+            //     .then(function (data) {
+            //         ctrl.raceListBounded = data.hits;
+            //         ctrl.raceTotalBounded = data.total;
+            //         ctrl.isLoadingBoundedList = false;
+            //         return ctrl.raceListBounded;
+            //     });
         }
 
         ctrl.search = function () {
-            searchRaces();
+            searchActivities();
         };
 
         ctrl.clearSearch = function () {
@@ -80,7 +85,7 @@
             ctrl.selectedRace = null;
             ctrl.raceListBounded = [];
             ctrl.raceTotalBounded = 0;
-            return searchRaces();
+            return searchActivities();
         };
 
         ctrl.onSelect = function (race) {
