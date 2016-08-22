@@ -13,3 +13,6 @@ node_modules
 
 # Sqlite
 db.sqlite3
+
+# Secrets
+server/settings_secret.py
