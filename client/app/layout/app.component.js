@@ -17,16 +17,23 @@
 
         ctrl.$onInit = function () {
 
-            stravaService.getIsAuthenticated().then(function (data) {
-                ctrl.isAuthenticated = data;
-                return ctrl.isAuthenticated;
-            });
 
-            stravaService.getAuthUrl().then(function (data) {
-                ctrl.authUrl = data;
-                return ctrl.authUrl;
-            });
+            ctrl.isAuthenticated = stravaService.getIsAuthenticated();
+
+            if (!ctrl.isAuthenticated || ctrl.isAuthenticated) {
+                stravaService.getAuthUrl().then(function (data) {
+                    ctrl.authUrl = data;
+                    return ctrl.authUrl;
+                });
+            }
+
+
         };
+
+        ctrl.deauthorize = function () {
+            ctrl.isAuthenticated = false;
+            stravaService.deauthorize();
+        }
 
     }
 

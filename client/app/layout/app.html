@@ -1,5 +1,17 @@
+<md-toolbar class="md-whiteframe-6dp">
+    <div class="md-toolbar-tools">
+        <h2>Show Me Races</h2>
+        <span flex>
+        </span>
+        <md-button aria-label="Authenticate Strava" ng-href="{{ $ctrl.authUrl }}">
+            Authenticate Strava
+        </md-button>
+        <md-button aria-label="Deauthorize Strava" ng-click="$ctrl.deauthorize()">
+            Deauthorize Strava
+        </md-button>
+    </div>
+</md-toolbar>
+<md-content layout="column" flex>
+    <div ui-view></div>
+</md-content>
 
-<race-home layout="column" ng-if="$ctrl.isAuthenticated" flex></race-home>
-<div ng-if="!$ctrl.isAuthenticated">
-    <md-button class="md-raised" ng-href="{{ $ctrl.authUrl }}">Button</md-button>
-</div>

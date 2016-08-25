@@ -4,14 +4,16 @@
     angular
         .module('app', [
             'ngMaterial',
-            'app.config',
             'app.layout',
             'app.util',
             'ngAnimate',
             'ngSanitize',
+            'ngCookies',
             'nemLogging',
             'ui-leaflet',
-            'app.races'
+            'app.races',
+            'ui.router',
+            'app.config',
         ]);
 
     angular

@@ -32,13 +32,16 @@
         ctrl.profile = {};
 
         ctrl.$onInit = function () {
-            searchActivities();
+            if (stravaService.getIsAuthenticated()) {
+                //searchActivities();
 
-            stravaService.getProfile()
-                .then(function (data) {
-                    ctrl.profile = data;
-                    return ctrl.profile;
-                });
+                stravaService.getProfile()
+                    .then(function (data) {
+                        ctrl.profile = data;
+                        return ctrl.profile;
+                    });
+            }
+
         };
 
         function searchActivities() {
@@ -47,7 +50,7 @@
                 ctrl.startDate,
                 ctrl.endDate,
                 ctrl.searchTerm
-                )
+            )
                 .then(function (data) {
                     ctrl.isLoadingList = false;
                     ctrl.raceList = data;

@@ -5,39 +5,36 @@
         .module('app.races.services')
         .factory('stravaService', stravaService);
 
-    stravaService.$inject = ['$http', '$q', 'logger'];
+    stravaService.$inject = ['$http', '$q', 'logger', '$cookies'];
 
-    function stravaService($http, $q, logger) {
+    function stravaService($http, $q, logger, $cookies) {
+
+        var STRAVA_TOKEN_KEY = 'stravaAccessToken';
+
         var stravaService = {
             getIsAuthenticated: getIsAuthenticated,
+            getAccessToken: getAccessToken,
+            setAuthenticationToken: setAuthenticationToken,
             getAuthUrl: getAuthUrl,
+            deauthorize: deauthorize,
             getProfile: getProfile,
             searchActivities: searchActivities
         };
         return stravaService;
 
         function getIsAuthenticated() {
-            return $http.get('api/v1/is-authenticated/?')
-                .then(getSuccess)
-                .catch(getError);
-            function getSuccess(data) {
-                return data.data;
-            }
+            return $cookies.get(STRAVA_TOKEN_KEY) != null;
+        }
 
-            function getError(e) {
-                var newMessage = 'Failed to get Strava Authentication Status';
-                if (e.data && e.data.message) {
-                    newMessage = newMessage + '\n' + e.data.message;
-                }
-                logger.error(newMessage, e);
-                return $q.reject(e);
-            }
+        function setAuthenticationToken(token) {
+            $cookies.put(STRAVA_TOKEN_KEY, token);
         }
 
         function getAuthUrl() {
             return $http.get('api/v1/auth-url/?')
                 .then(getSuccess)
                 .catch(getError);
+
             function getSuccess(data) {
                 return data.data;
             }
@@ -52,8 +49,62 @@
             }
         }
 
+        function getAccessToken(code) {
+            return $http.get('api/v1/access-token/?',
+                {
+                    params: {
+                        code: code
+                    }
+                })
+                .then(getSuccess)
+                .catch(getError);
+
+            function getSuccess(data) {
+                return data.data;
+            }
+
+            function getError(e) {
+                var newMessage = 'Failed to get Strava Access Token';
+                if (e.data && e.data.message) {
+                    newMessage = newMessage + '\n' + e.data.message;
+                }
+                logger.error(newMessage, e);
+                return $q.reject(e);
+            }
+        }
+
+        function deauthorize(code) {
+
+            return $http.get('api/v1/deauthorize/?',
+                {
+                    params: {
+                        access_token: $cookies.get(STRAVA_TOKEN_KEY),
+                    }
+                })
+                .then(getSuccess)
+                .catch(getError);
+
+            function getSuccess() {
+                return $cookies.remove(STRAVA_TOKEN_KEY);;
+            }
+
+            function getError(e) {
+                var newMessage = 'Failed to deauthorize from Strava.';
+                if (e.data && e.data.message) {
+                    newMessage = newMessage + '\n' + e.data.message;
+                }
+                logger.error(newMessage, e);
+                return $q.reject(e);
+            }
+        }
+
         function getProfile() {
-            return $http.get('api/v1/profile/?')
+            return $http.get('api/v1/profile/?',
+                {
+                    params: {
+                        access_token: $cookies.get(STRAVA_TOKEN_KEY),
+                    }
+                })
                 .then(getSuccess)
                 .catch(getError);
             function getSuccess(data) {
@@ -71,8 +122,8 @@
         }
 
         function searchActivities(start,
-                        end,
-                        searchTerm) {
+                                  end,
+                                  searchTerm) {
             return $http.get('api/v1/activity-search/?',
                 {
                     params: {
