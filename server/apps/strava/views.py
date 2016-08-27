@@ -4,7 +4,7 @@ from rest_framework.response import Response
 import requests
 
 from stravalib import Client, unithelper, exc
-from server.settings_secret import MY_STRAVA_CLIENT_ID, MY_STRAVA_CLIENT_SECRET
+from server.settings_secret import MY_STRAVA_CLIENT_ID, MY_STRAVA_CLIENT_SECRET, AUTH_REDIRECT_URI
 
 @api_view()
 def get_authorization_url(request):
@@ -38,7 +38,7 @@ def de_authorize(request):
     client = Client()
     client.deauthorize()
     url = client.authorization_url(client_id=MY_STRAVA_CLIENT_ID,
-                                   redirect_uri='http://127.0.0.1:8000/strava-authorization')
+                                   redirect_uri=AUTH_REDIRECT_URI)
     return Response(url)
 
 
