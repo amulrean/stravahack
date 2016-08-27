@@ -14,5 +14,8 @@ node_modules
 # Sqlite
 db.sqlite3
 
+#
+staticfiles/
+
 # Secrets
 server/settings_secret.py
