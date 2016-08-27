@@ -21,11 +21,11 @@
         $stateProvider
             .state('home', {
                 url: "/",
-                template: "<race-home></race-home>"
+                template: "<race-home layout='column' flex></race-home>"
             })
             .state('stravaAuthentication', {
                 url: "/strava-authorization?state&code",
-                controller: function ($stateParams, $state, stravaService, logger) {
+                controller: function ($window, $stateParams, $state, stravaService, logger) {
                     if ($stateParams.code != null) {
                         stravaService.getAccessToken($stateParams.code).then(function (access_token) {
                             stravaService.setAuthenticationToken(access_token);

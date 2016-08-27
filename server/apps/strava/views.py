@@ -1,8 +1,9 @@
 from django.http import HttpResponseRedirect
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+import requests
 
-from stravalib import Client, unithelper
+from stravalib import Client, unithelper, exc
 from server.settings_secret import MY_STRAVA_CLIENT_ID, MY_STRAVA_CLIENT_SECRET
 
 @api_view()
@@ -18,6 +19,7 @@ def deauthorize(request):
     access_token = request.query_params.get('access_token')
     client = Client(access_token)
     client.deauthorize()
+
     return HttpResponseRedirect('/')
 
 

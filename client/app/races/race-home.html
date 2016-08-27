@@ -7,9 +7,8 @@
                   on-map-bounds-update="$ctrl.onMapBoundsUpdate(bounds)"
                   on-select="$ctrl.onSelect(race)"
                   on-click-selected="$ctrl.onClickSelected(race)"
-                  layout="column" flex></race-map>
+                  layout="column" flex="grow"></race-map>
     </div>
-
     <div layout="column" class="md-whiteframe-3dp" flex="40">
         <form role="form" layout="row" ng-submit="$ctrl.search()" layout-padding>
             <md-input-container flex style="margin-bottom: 0">

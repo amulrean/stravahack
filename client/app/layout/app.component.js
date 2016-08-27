@@ -8,27 +8,33 @@
             controller: AppController
         });
 
-    AppController.$inject = ['stravaService'];
+    AppController.$inject = ['$scope', '$cookies', 'stravaService'];
 
-    function AppController(stravaService) {
+    function AppController($scope, $cookies, stravaService) {
         var ctrl = this;
         ctrl.isAuthenticated = false;
         ctrl.authUrl = '';
 
         ctrl.$onInit = function () {
+            setAuthenticationStatus();
+        };
 
-
+        function setAuthenticationStatus() {
             ctrl.isAuthenticated = stravaService.getIsAuthenticated();
 
-            if (!ctrl.isAuthenticated || ctrl.isAuthenticated) {
+            if (!ctrl.isAuthenticated) {
                 stravaService.getAuthUrl().then(function (data) {
                     ctrl.authUrl = data;
                     return ctrl.authUrl;
                 });
             }
+        }
 
-
-        };
+        $scope.$watch(function() { return $cookies.get(stravaService.STRAVA_TOKEN_KEY); }, function(newValue, oldValue) {
+            if (newValue !== oldValue) {
+                setAuthenticationStatus();
+            }
+        });
 
         ctrl.deauthorize = function () {
             ctrl.isAuthenticated = false;

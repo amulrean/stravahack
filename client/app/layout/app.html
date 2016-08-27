@@ -1,17 +1,23 @@
 <md-toolbar class="md-whiteframe-6dp">
     <div class="md-toolbar-tools">
-        <h2>Show Me Races</h2>
+        <h2>Race Review</h2>
         <span flex>
         </span>
-        <md-button aria-label="Authenticate Strava" ng-href="{{ $ctrl.authUrl }}">
-            Authenticate Strava
+        <md-button aria-label="Authenticate Strava"
+                   ng-href="{{ $ctrl.authUrl }}"
+                   ng-if="!$ctrl.isAuthenticated"
+        >
+            <img class="logo-image" src="static/assets/ConnectWithStrava@2x.png">
         </md-button>
-        <md-button aria-label="Deauthorize Strava" ng-click="$ctrl.deauthorize()">
+        <md-button aria-label="Deauthorize Strava"
+                   ng-click="$ctrl.deauthorize()"
+                   ng-if="$ctrl.isAuthenticated"
+        >
             Deauthorize Strava
         </md-button>
     </div>
 </md-toolbar>
 <md-content layout="column" flex>
-    <div ui-view></div>
+    <div ui-view layout="column" flex></div>
 </md-content>
 

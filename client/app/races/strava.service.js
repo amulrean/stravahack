@@ -9,9 +9,8 @@
 
     function stravaService($http, $q, logger, $cookies) {
 
-        var STRAVA_TOKEN_KEY = 'stravaAccessToken';
-
         var stravaService = {
+            STRAVA_TOKEN_KEY: 'stravaAccessToken',
             getIsAuthenticated: getIsAuthenticated,
             getAccessToken: getAccessToken,
             setAuthenticationToken: setAuthenticationToken,
@@ -23,11 +22,27 @@
         return stravaService;
 
         function getIsAuthenticated() {
-            return $cookies.get(STRAVA_TOKEN_KEY) != null;
+            return $cookies.get(stravaService.STRAVA_TOKEN_KEY) != null;
         }
 
         function setAuthenticationToken(token) {
-            $cookies.put(STRAVA_TOKEN_KEY, token);
+            $cookies.put(stravaService.STRAVA_TOKEN_KEY, token);
+        }
+
+        function stravaErrorHandler (e, message) {
+            if (e.status === 401) {
+                return handleUnauthorized();
+            }
+
+            logger.error(message, e);
+
+            return $q.reject(e);
+        }
+
+        function handleUnauthorized () {
+            $cookies.remove(stravaService.STRAVA_TOKEN_KEY);
+
+            return $q.reject(e);
         }
 
         function getAuthUrl() {
@@ -40,12 +55,11 @@
             }
 
             function getError(e) {
-                var newMessage = 'Failed to get Strava Authentication Url';
-                if (e.data && e.data.message) {
-                    newMessage = newMessage + '\n' + e.data.message;
-                }
-                logger.error(newMessage, e);
-                return $q.reject(e);
+
+                var message = 'Failed to get Strava Authentication Url';
+
+                return stravaErrorHandler(e, message);
+
             }
         }
 
@@ -64,12 +78,8 @@
             }
 
             function getError(e) {
-                var newMessage = 'Failed to get Strava Access Token';
-                if (e.data && e.data.message) {
-                    newMessage = newMessage + '\n' + e.data.message;
-                }
-                logger.error(newMessage, e);
-                return $q.reject(e);
+                var message = 'Failed to get Strava Access Token';
+                return stravaErrorHandler(e, message);
             }
         }
 
@@ -78,23 +88,20 @@
             return $http.get('api/v1/deauthorize/?',
                 {
                     params: {
-                        access_token: $cookies.get(STRAVA_TOKEN_KEY),
+                        access_token: $cookies.get(stravaService.STRAVA_TOKEN_KEY),
                     }
                 })
                 .then(getSuccess)
                 .catch(getError);
 
             function getSuccess() {
-                return $cookies.remove(STRAVA_TOKEN_KEY);;
+                return $cookies.remove(stravaService.STRAVA_TOKEN_KEY);
             }
 
             function getError(e) {
-                var newMessage = 'Failed to deauthorize from Strava.';
-                if (e.data && e.data.message) {
-                    newMessage = newMessage + '\n' + e.data.message;
-                }
-                logger.error(newMessage, e);
-                return $q.reject(e);
+                var message = 'Failed to deauthorize from Strava.';
+                $cookies.remove(stravaService.STRAVA_TOKEN_KEY)
+                return stravaErrorHandler(e, message);
             }
         }
 
@@ -102,7 +109,7 @@
             return $http.get('api/v1/profile/?',
                 {
                     params: {
-                        access_token: $cookies.get(STRAVA_TOKEN_KEY),
+                        access_token: $cookies.get(stravaService.STRAVA_TOKEN_KEY),
                     }
                 })
                 .then(getSuccess)
@@ -112,12 +119,8 @@
             }
 
             function getError(e) {
-                var newMessage = 'Failed to get Strava Profile';
-                if (e.data && e.data.message) {
-                    newMessage = newMessage + '\n' + e.data.message;
-                }
-                logger.error(newMessage, e);
-                return $q.reject(e);
+                var message = 'Failed to get Strava Profile';
+                return stravaErrorHandler(e, message);
             }
         }
 
@@ -139,12 +142,8 @@
             }
 
             function listError(e) {
-                var newMessage = 'Failed to get strava activities';
-                if (e.data && e.data.message) {
-                    newMessage = newMessage + '\n' + e.data.message;
-                }
-                logger.error(newMessage, e);
-                return $q.reject(e);
+                var message = 'Failed to get strava activities';
+                return stravaErrorHandler(e, message);
             }
         }
     }
