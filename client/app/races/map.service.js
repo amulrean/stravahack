@@ -19,7 +19,6 @@
             toggleRaceRoute: toggleRaceRoute,
             removeRaceRoute: removeRaceRoute,
             updateSelectedRacePath: updateSelectedRacePath,
-            updateSelectedRaceDetailRoute: updateSelectedRaceDetailRoute,
             getPathRaceObjectById: getPathRaceObjectById,
             resetMap: resetMap,
             baselayers: {
@@ -292,7 +291,7 @@
                 mapObject.paths["selectedRace"] = {
                     layer: "selectedRace",
                     type: "circleMarker",
-                    latlngs: [raceObj._source.location.lat, raceObj._source.location.lon],
+                    latlngs: [raceObj.start_latlng[0], raceObj.start_latlng[1]],
                     radius: 20,
                     color: '#EF6C00'
                 };
@@ -300,9 +299,6 @@
                 mapObject.paths["selectedRace"] = {};
             }
 
-        }
-
-        function updateSelectedRaceDetailRoute(mapObject, raceObj) {
             mapObject.paths['raceDetailRoute'] = {
                 latlngs: [],
                 weight: 10,
@@ -311,16 +307,17 @@
 
             var outsideBoundsLatLongArray = [[180, 180], [-180, -180]];
 
-            for (var latlonId in raceObj._source.route.coordinates) {
-                var currentLatlon = raceObj._source.route.coordinates[latlonId];
-                var lat = currentLatlon[1];
-                var lng = currentLatlon[0];
+            for (var latlonId in raceObj.stream_data.latlng) {
+                var currentLatlon = raceObj.stream_data.latlng[latlonId];
+                var lat = currentLatlon[0];
+                var lng = currentLatlon[1];
                 mapObject.paths['raceDetailRoute'].latlngs.push({lat: lat, lng: lng});
 
                 extendBoundsIfNeeded(outsideBoundsLatLongArray, lat, lng);
             }
             var routeBounds = leafletBoundsHelpers.createBoundsFromArray(outsideBoundsLatLongArray);
             updateBounds(mapObject, routeBounds);
+
         }
 
         function getPathRaceObjectById(mapObject, raceObjId) {

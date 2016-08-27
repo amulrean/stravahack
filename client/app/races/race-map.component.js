@@ -7,10 +7,6 @@
             bindings: {
                 raceList: '<',
                 selectedRace: '<',
-                clickedRace: '<',
-                onMapBoundsUpdate: '&',
-                onSelect: '&',
-                onClickSelected: '&'
             },
             templateUrl: 'static/app/races/race-map.html',
             controller: RaceMapController
@@ -44,61 +40,16 @@
 
             mapService.updateBounds(ctrl.mapObject, mapService.bounds.northEasterUS);
 
-            //Add Event Actions
-            $scope.$on('leafletDirectiveMarker.raceMap.mouseover', function (event, args) {
-
-                ctrl.onSelect({race: args.model.raceObj});
-            });
-
-            $scope.$on('leafletDirectiveMarker.raceMap.click', function (event, args) {
-
-                ctrl.onClickSelected({race: args.model.raceObj});
-            });
-
-            $scope.$on('leafletDirectivePath.raceMap.mouseover', function (event, args) {
-
-                var raceObj = mapService.getPathRaceObjectById(ctrl.mapObject, args.modelName);
-
-                ctrl.onSelect({race: raceObj});
-            });
-
-            $scope.$on('leafletDirectivePath.raceMap.click', function (event, args) {
-
-                var raceObj = mapService.getPathRaceObjectById(ctrl.mapObject, args.modelName);
-
-                ctrl.onClickSelected({race: raceObj});
-            });
 
         };
 
         ctrl.$onChanges = function (changesObj) {
 
-            if (changesObj.raceList && changesObj.raceList.currentValue != changesObj.raceList.previousValue) {
-                mapService.updateRacesAndRoutes(ctrl.mapObject, changesObj.raceList.currentValue);
-            }
-
             if (changesObj.selectedRace &&
                 changesObj.selectedRace.currentValue != changesObj.selectedRace.previousValue) {
-                mapService.updateSelectedRacePath(ctrl.mapObject, changesObj.selectedRace.currentValue);
-            }
-
-            if (changesObj.clickedRace &&
-                changesObj.clickedRace.currentValue != changesObj.clickedRace.previousValue) {
-                mapService.toggleRaceRoute(ctrl.mapObject, changesObj.clickedRace.currentValue);
+                mapService.updateSelectedRacePath(ctrl.mapObject, ctrl.raceList[changesObj.selectedRace.currentValue]);
             }
         };
-
-
-        $scope.$watch('$ctrl.mapObject.bounds', _.debounce(function (newValue, oldValue) {
-            if (newValue != oldValue && ctrl.initialBoundsSet === true) {
-                ctrl.onMapBoundsUpdate({bounds: ctrl.mapObject.bounds});
-            }
-            // When the page is rendered bounds are intially set to the size of the page, we don't want to use those bounds to search
-            if (ctrl.initialBoundsSet === false) {
-                ctrl.initialBoundsSet = true;
-            }
-
-        }, 1000));
 
 
     }

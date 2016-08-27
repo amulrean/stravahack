@@ -26,7 +26,7 @@ def deauthorize(request):
 @api_view()
 def get_access_token(request):
 
-    code = request.query_params.get('code')  # e.g.
+    code = request.query_params.get('code')
     client = Client()
     new_access_token = client.exchange_code_for_token(client_id=MY_STRAVA_CLIENT_ID,
                                                   client_secret=MY_STRAVA_CLIENT_SECRET,
@@ -53,6 +53,7 @@ def get_athlete_profile(request):
 
 @api_view()
 def activity_search(request):
+
 
     access_token = request.query_params.get('access_token')
     client = Client(access_token)

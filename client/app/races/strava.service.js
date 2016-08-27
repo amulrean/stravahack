@@ -130,6 +130,7 @@
             return $http.get('api/v1/activity-search/?',
                 {
                     params: {
+                        access_token: $cookies.get(stravaService.STRAVA_TOKEN_KEY),
                         start: start,
                         end: end,
                         search_term: searchTerm

@@ -1,53 +1,26 @@
 <div layout="row" flex>
     <div layout="column" flex>
-        <md-progress-linear md-mode="indeterminate" class="md-accent" ng-show="$ctrl.isLoadingList"></md-progress-linear>
+        <md-progress-linear md-mode="indeterminate" class="md-accent"
+                            ng-show="$ctrl.isLoadingList"></md-progress-linear>
         <race-map race-list="$ctrl.raceList"
                   selected-race="$ctrl.selectedRace"
                   clicked-race="$ctrl.clickedRace"
-                  on-map-bounds-update="$ctrl.onMapBoundsUpdate(bounds)"
                   on-select="$ctrl.onSelect(race)"
                   on-click-selected="$ctrl.onClickSelected(race)"
                   layout="column" flex="grow"></race-map>
     </div>
     <div layout="column" class="md-whiteframe-3dp" flex="40">
-        <form role="form" layout="row" ng-submit="$ctrl.search()" layout-padding>
-            <md-input-container flex style="margin-bottom: 0">
-                <label>Search</label>
-                <input ng-model="$ctrl.searchTerm">
-            </md-input-container>
-            <md-input-container style="margin-bottom: 0">
-                <md-button type="submit" class="md-primary">Search</md-button>
-                <md-button class="md-accent" ng-click="$ctrl.clearSearch()">
-                    Clear
-                    <md-tooltip md-direction="bottom">
-                        Resets the search and map.
-                    </md-tooltip>
-                </md-button>
-            </md-input-container>
-        </form>
-        <race-detail selected-race="$ctrl.selectedRace"
-                     min-height="250px"
-                     layout-padding layout="row"></race-detail>
-        <md-divider></md-divider>
-        <div layout-padding>
-            <h3>
-                <span>Races: {{ $ctrl.raceTotalBounded }}
-                <md-tooltip md-direction="bottom">
-                    Number of races displayed on map.
-                </md-tooltip>
-                </span>
-            </h3>
+
+        <h3>{{ $ctrl.raceList[$ctrl.selectedRace].name }}</h3>
+        <h5>{{ $ctrl.raceList[$ctrl.selectedRace].moving_time }}</h5>
+
+        <div layout="row">
+            <md-button class="md-primary md-raised" ng-click="$ctrl.previousRace()">
+                Previous Activity
+            </md-button>
+            <md-button class="md-primary md-raised" ng-click="$ctrl.nextRace()">
+                Next Activity
+            </md-button>
         </div>
-
-        <md-divider></md-divider>
-        <md-progress-linear md-mode="indeterminate" class="md-accent" ng-show="$ctrl.isLoadingBoundedList"></md-progress-linear>
-        <race-list
-                race-list-bounded="$ctrl.raceListBounded"
-                selected-race="$ctrl.selectedRace"
-                is-loading="$ctrl.isLoadingBoundedList"
-                on-select="$ctrl.onSelect(race)"
-                on-click-selected="$ctrl.onClickSelected(race)"
-                layout="column" layout-padding style="overflow: auto;" flex></race-list>
-
     </div>
 </div>
