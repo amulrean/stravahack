@@ -10,7 +10,7 @@ from server.settings_secret import MY_STRAVA_CLIENT_ID, MY_STRAVA_CLIENT_SECRET,
 def get_authorization_url(request):
     client = Client()
     url = client.authorization_url(client_id=MY_STRAVA_CLIENT_ID,
-                                   redirect_uri='http://127.0.0.1:8000/strava-authorization')
+                                   redirect_uri=AUTH_REDIRECT_URI)
     return Response(url)
 
 @api_view()
