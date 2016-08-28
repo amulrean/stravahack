@@ -1,7 +1,8 @@
 from django.http import HttpResponseRedirect
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-import requests
+
+from datetime import datetime, timedelta
 
 from stravalib import Client, unithelper, exc
 from server.settings_secret import MY_STRAVA_CLIENT_ID, MY_STRAVA_CLIENT_SECRET, AUTH_REDIRECT_URI
@@ -58,9 +59,13 @@ def activity_search(request):
     access_token = request.query_params.get('access_token')
     client = Client(access_token)
 
-    activities = client.get_activities(after="2016-07-01T00:00:00Z", limit=10)
+    after_date = datetime.today() - timedelta(days=30)
+
+    activities = client.get_activities(after=after_date)
     resp = []
     for activity in activities:
+
+        activity_fields = ['id', 'name', 'moving_time']
 
         stream_types = ['time', 'latlng', 'altitude', 'heartrate', 'temp', ]
         streams = client.get_activity_streams(activity.id, types=stream_types, resolution='low')
@@ -80,7 +85,14 @@ def activity_search(request):
         resp.append({
             'id': activity.id,
             'name': activity.name,
+            'description': activity.description,
+            'type': activity.type,
             'moving_time': activity.moving_time,
+            # 'distance': activity.distance,
+            # 'total_elevation_gain': activity.total_elevation_gain,
+            'comment_count': activity.comment_count,
+            'kudos_count': activity.kudos_count,
+            'splits_metric': activity.splits_metric,
             'start_latlng': activity.start_latlng,
             'stream_data': stream_data,
         })

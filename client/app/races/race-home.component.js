@@ -11,9 +11,9 @@
             controller: RaceHomeController
         });
 
-    RaceHomeController.$inject = ['stravaService', 'logger'];
+    RaceHomeController.$inject = ['stravaService', '$interval'];
 
-    function RaceHomeController(stravaService) {
+    function RaceHomeController(stravaService, $interval) {
         var ctrl = this;
 
         ctrl.raceList = [];
@@ -25,6 +25,8 @@
         ctrl.endDate = null;
         ctrl.isLoadingList = false;
         ctrl.profile = {};
+
+        ctrl.intervalPromise = undefined;
 
         ctrl.$onInit = function () {
             if (stravaService.getIsAuthenticated()) {
@@ -57,15 +59,33 @@
                 });
         }
 
+        ctrl.playAnimation = function () {
+            ctrl.intervalPromise = $interval(function () {
+                ctrl.nextRace();
+            }, 2000);
+        };
+
+        ctrl.pauseAnimation = function () {
+            if (angular.isDefined(ctrl.intervalPromise)) {
+                $interval.cancel(ctrl.intervalPromise);
+                ctrl.intervalPromise = undefined;
+            }
+        };
+
         ctrl.nextRace = function () {
-            if (ctrl.selectedRace < ctrl.raceList.length -1) {
-                ctrl.selectedRace ++;
+            if (ctrl.selectedRace < ctrl.raceList.length - 1) {
+                ctrl.selectedRace++;
+            } else {
+                if (angular.isDefined(ctrl.intervalPromise)) {
+                    $interval.cancel(ctrl.intervalPromise);
+                    ctrl.intervalPromise = undefined;
+                }
             }
         };
 
         ctrl.previousRace = function () {
             if (ctrl.selectedRace > 0) {
-                ctrl.selectedRace --;
+                ctrl.selectedRace--;
             }
         };
 

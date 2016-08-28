@@ -42,3 +42,8 @@ https://www.digitalocean.com/community/tutorials/how-to-use-the-django-one-click
 - run python manage.py migrate
 
 - service gunicorn restart
+
+### Perform updates on server
+ - git pull
+ - sudo service nginx restart
+ - service gunicorn restart

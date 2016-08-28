@@ -1,5 +1,10 @@
 <div layout="row" flex>
     <div layout="column" flex>
+        <div layout="column" layout-align="center center" flex="10">
+            <h1>{{ $ctrl.raceList[$ctrl.selectedRace].name }}</h1>
+            <h3 ng-if="$ctrl.raceList[$ctrl.selectedRace].description.length > 0">
+                {{ $ctrl.raceList[$ctrl.selectedRace].description }}</h3>
+        </div>
         <md-progress-linear md-mode="indeterminate" class="md-accent"
                             ng-show="$ctrl.isLoadingList"></md-progress-linear>
         <race-map race-list="$ctrl.raceList"
@@ -7,20 +12,63 @@
                   clicked-race="$ctrl.clickedRace"
                   on-select="$ctrl.onSelect(race)"
                   on-click-selected="$ctrl.onClickSelected(race)"
-                  layout="column" flex="grow"></race-map>
+                  layout="column" flex></race-map>
     </div>
-    <div layout="column" class="md-whiteframe-3dp" flex="40">
-
-        <h3>{{ $ctrl.raceList[$ctrl.selectedRace].name }}</h3>
-        <h5>{{ $ctrl.raceList[$ctrl.selectedRace].moving_time }}</h5>
-
-        <div layout="row">
+    <div layout="column" class="md-whiteframe-3dp" flex="30">
+        <div layout="row" layout-align="center center" flex="20">
             <md-button class="md-primary md-raised" ng-click="$ctrl.previousRace()">
                 Previous Activity
+            </md-button>
+            <md-button class="md-primary md-raised"
+                       ng-click="$ctrl.playAnimation()"
+                       ng-if="!$ctrl.intervalPromise"
+            >
+                Play
+            </md-button>
+            <md-button class="md-primary md-raised"
+                       ng-click="$ctrl.pauseAnimation()"
+                       ng-if="$ctrl.intervalPromise"
+            >
+                Pause
             </md-button>
             <md-button class="md-primary md-raised" ng-click="$ctrl.nextRace()">
                 Next Activity
             </md-button>
+        </div>
+        <div layout="row" class="md-padding">
+            <h3 flex="30">
+                Stats
+            </h3>
+            <h5>
+                Distance: {{ $ctrl.raceList[$ctrl.selectedRace].distance }} miles <br>
+                Time: {{ $ctrl.raceList[$ctrl.selectedRace].moving_time }} <br>
+                Comments: {{ $ctrl.raceList[$ctrl.selectedRace].comments_count }}<br>
+                Kudos: {{ $ctrl.raceList[$ctrl.selectedRace].kudos_count }} <br>
+            </h5>
+        </div>
+        <div layout="column">
+            <div layout="row">
+                <h3 flex="30">
+                    Top Friends:
+                </h3>
+                <h5>
+                    Andrew<br>
+                    Mike<br>
+                    Brian<br>
+                </h5>
+            </div>
+        </div>
+        <div layout="column">
+            <div layout="row">
+                <h3 flex="30">
+                    Top Efforts:
+                </h3>
+                <h5>
+                    1 Mile<br>
+                    5k<br>
+                    10k<br>
+                </h5>
+            </div>
         </div>
     </div>
 </div>

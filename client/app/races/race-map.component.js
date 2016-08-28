@@ -45,7 +45,7 @@
 
         ctrl.$onChanges = function (changesObj) {
 
-            if (changesObj.selectedRace &&
+            if (changesObj.selectedRace && changesObj.selectedRace.currentValue !== null &&
                 changesObj.selectedRace.currentValue != changesObj.selectedRace.previousValue) {
                 mapService.updateSelectedRacePath(ctrl.mapObject, ctrl.raceList[changesObj.selectedRace.currentValue]);
             }
