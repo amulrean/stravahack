@@ -5,9 +5,9 @@
         .module('app.races.services')
         .factory('mapService', mapService);
 
-    mapService.$inject = ['leafletBoundsHelpers'];
+    mapService.$inject = ['leafletBoundsHelpers', '$interval'];
 
-    function mapService(leafletBoundsHelpers) {
+    function mapService(leafletBoundsHelpers, $interval) {
         var mapService = {
             getDefaultMapObject: getDefaultMapObject,
             addBaseLayer: addBaseLayer,
@@ -291,8 +291,8 @@
                 mapObject.paths["selectedRace"] = {
                     layer: "selectedRace",
                     type: "circleMarker",
-                    latlngs: [raceObj.start_latlng[0], raceObj.start_latlng[1]],
-                    radius: 20,
+                    latlngs: [0, 0],
+                    radius: 200,
                     color: '#EF6C00'
                 };
             } else {
@@ -307,16 +307,40 @@
 
             var outsideBoundsLatLongArray = [[180, 180], [-180, -180]];
 
-            for (var latlonId in raceObj.stream_data.latlng) {
-                var currentLatlon = raceObj.stream_data.latlng[latlonId];
+            var pathLatLngs = angular.copy(raceObj.stream_data.latlng);
+
+            for (var latlonId in pathLatLngs) {
+                var currentLatlon = pathLatLngs[latlonId];
                 var lat = currentLatlon[0];
                 var lng = currentLatlon[1];
-                mapObject.paths['raceDetailRoute'].latlngs.push({lat: lat, lng: lng});
-
                 extendBoundsIfNeeded(outsideBoundsLatLongArray, lat, lng);
             }
             var routeBounds = leafletBoundsHelpers.createBoundsFromArray(outsideBoundsLatLongArray);
             updateBounds(mapObject, routeBounds);
+
+
+            mapObject.paths['selectedRace'].latlngs = [pathLatLngs[0][0], pathLatLngs[0][1]];
+
+            $interval(function () {
+                var oldRadius = mapObject.paths['selectedRace'].radius;
+                mapObject.paths['selectedRace'].radius = oldRadius - 10;
+            }, 100, 18).then(function () {
+                    $interval(function () {
+                        var currentLatlon = pathLatLngs.shift();
+                        var lat = currentLatlon[0];
+                        var lng = currentLatlon[1];
+                        mapObject.paths['raceDetailRoute'].latlngs.push({lat: lat, lng: lng});
+                        mapObject.paths['selectedRace'].latlngs = [lat, lng];
+                    }, 50, pathLatLngs.length);
+                }
+            )
+            ;
+
+
+        }
+
+        function addNextPoint(mapObject, raceObject) {
+
 
         }
 

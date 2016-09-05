@@ -51,7 +51,6 @@
                     ctrl.isLoadingList = false;
                     if (data && data.length > 0) {
                         ctrl.raceList = data;
-                        ctrl.selectedRace = 0;
                     } else {
                         $mdToast.show($mdToast.simple().textContent("No Activities found."));
                     }
@@ -60,9 +59,10 @@
         }
 
         ctrl.playAnimation = function () {
+            ctrl.nextRace();
             ctrl.intervalPromise = $interval(function () {
                 ctrl.nextRace();
-            }, 2000);
+            }, 10000);
         };
 
         ctrl.pauseAnimation = function () {
@@ -73,7 +73,9 @@
         };
 
         ctrl.nextRace = function () {
-            if (ctrl.selectedRace < ctrl.raceList.length - 1) {
+            if (ctrl.selectedRace === null) {
+                ctrl.selectedRace = 0;
+            } else if (ctrl.selectedRace < ctrl.raceList.length - 1) {
                 ctrl.selectedRace++;
             } else {
                 if (angular.isDefined(ctrl.intervalPromise)) {
