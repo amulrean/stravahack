@@ -129,16 +129,16 @@
             }
         }
 
-        function searchActivities(start,
-                                  end,
-                                  searchTerm) {
+        function searchActivities(activityType,
+                                  start,
+                                  end) {
             return $http.get('api/v1/activity-search/?',
                 {
                     params: {
                         access_token: $cookies.get(stravaService.STRAVA_TOKEN_KEY),
-                        start: start,
-                        end: end,
-                        search_term: searchTerm
+                        activity_type: activityType,
+                        start_date: start,
+                        end_date: end
                     }
                 })
                 .then(listSuccess)

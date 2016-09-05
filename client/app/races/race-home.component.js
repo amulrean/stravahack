@@ -11,9 +11,9 @@
             controller: RaceHomeController
         });
 
-    RaceHomeController.$inject = ['stravaService', '$interval'];
+    RaceHomeController.$inject = ['stravaService', '$interval', '$stateParams', '$state'];
 
-    function RaceHomeController(stravaService, $interval) {
+    function RaceHomeController(stravaService, $interval, $stateParams, $state) {
         var ctrl = this;
 
         ctrl.raceList = [];
@@ -29,6 +29,13 @@
         ctrl.intervalPromise = undefined;
 
         ctrl.$onInit = function () {
+            if($stateParams.activityType == null ||
+                $stateParams.startDate == null ||
+                $stateParams.endDate == null)
+            {
+                $state.go('welcome');
+            }
+
             if (stravaService.getIsAuthenticated()) {
                 searchActivities();
 
@@ -42,10 +49,11 @@
 
         function searchActivities() {
             ctrl.isLoadingList = true;
+            console.log($stateParams);
             return stravaService.searchActivities(
-                ctrl.startDate,
-                ctrl.endDate,
-                ctrl.searchTerm
+                $stateParams.activityType,
+                $stateParams.startDate,
+                $stateParams.endDate
             )
                 .then(function (data) {
                     ctrl.isLoadingList = false;

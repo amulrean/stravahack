@@ -59,16 +59,28 @@ def activity_search(request):
     access_token = request.query_params.get('access_token')
     client = Client(access_token)
 
-    after_date = datetime.today() - timedelta(days=30)
+    # u'Mon Sep 05 2016 00:00:00 GMT-0400 (EDT)'
 
-    activities = client.get_activities(after=after_date)
+    format_str = '%a %b %d %Y'
+    start_str = request.query_params.get('start_date')[0:15]
+    end_str = request.query_params.get('end_date')[0:15]
+
+    activity_type = request.query_params.get('activity_type')
+    start_date = datetime.strptime(start_str, format_str)
+    end_date = datetime.strptime(end_str, format_str)
+
+    activities = client.get_activities(after=start_date, before=end_date)
     resp = []
     for activity in activities:
-
-        activity_fields = ['id', 'name', 'moving_time']
-
-        stream_types = ['time', 'latlng', 'altitude', 'heartrate', 'temp', ]
-        streams = client.get_activity_streams(activity.id, types=stream_types, resolution='low')
+        if activity.type != activity_type:
+            continue
+        # stream_types = ['time', 'latlng', 'altitude', 'heartrate', 'temp', ]
+        stream_types = ['latlng']
+        try:
+            streams = client.get_activity_streams(activity.id, types=stream_types, resolution='low')
+        except:
+            # found activity with no lat lngs
+            continue
 
         stream_data = {}
 

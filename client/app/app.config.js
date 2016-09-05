@@ -25,8 +25,8 @@
                 url: "/",
                 template: "<strava-welcome layout='column' flex></strava-welcome>"
             })
-            .state('home', {
-                url: "/map",
+            .state('visualize', {
+                url: "/visualize?activityType&startDate&endDate",
                 template: "<race-home layout='column' flex></race-home>"
             })
             .state('stravaAuthentication', {
