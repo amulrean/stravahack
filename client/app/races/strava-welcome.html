@@ -1,0 +1,54 @@
+<div layout="column" layout-align="start center" flex="80">
+
+    <div class="md-whiteframe-9dp md-padding" layout="column" layout-align="center center">
+        <h1>Race Review</h1>
+        <p>Race review will give you an animated tour of your training cycle.</p>
+    </div>
+
+    <div layout="column" ng-if="!$ctrl.isAuthenticated" layout="column" layout-align="center center">
+        <h3>Authorize with Strava to Continue</h3>
+        <md-button aria-label="Authenticate Strava"
+                   ng-href="{{ $ctrl.authUrl }}"
+                   ng-if="!$ctrl.isAuthenticated"
+        >
+            <img class="logo-image" src="static/assets/ConnectWithStrava@2x.png">
+        </md-button>
+    </div>
+    <div layout="column" ng-if="$ctrl.isAuthenticated && $ctrl.profile">
+        <md-card md-theme="dark-grey" class="md-padding">
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline">Welcome {{ $ctrl.profile.firstname }} {{ $ctrl.profile.lastname }}</span>
+                    <span class="md-subhead">{{ $ctrl.profile.state }} {{ $ctrl.profile.country }}</span>
+                </md-card-title-text>
+                <md-card-title-media>
+                    <div class="md-media-md card-media">
+                        <img ng-src="{{ $ctrl.profile.profile }}">
+                    </div>
+                </md-card-title-media>
+            </md-card-title>
+        </md-card>
+
+        <p>Select your race parameters below.</p>
+        <form ng-submit="$ctrl.submit()" class="md-whiteframe-1dp md-padding" >
+            <div>
+                <h4> Select Activity Type</h4>
+                <md-radio-group ng-model="$ctrl.activityType">
+                    <md-radio-button value="run" class="md-primary">Run</md-radio-button>
+                    <md-radio-button value="ride">Ride</md-radio-button>
+                </md-radio-group>
+            </div>
+
+            <div>
+                <h4>When did you start Training?</h4>
+                <md-datepicker ng-model="$ctrl.startDate" md-placeholder="Start Date"></md-datepicker>
+            </div>
+            <div>
+                <h4>When was your Target Race</h4>
+                <md-datepicker ng-model="$ctrl.endDate" md-placeholder="End Date"></md-datepicker>
+            </div>
+            <md-button class="md-raised md-primary" type="submit">Let's Go!</md-button>
+        </form>
+    </div>
+
+</div>

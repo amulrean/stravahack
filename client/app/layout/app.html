@@ -3,12 +3,6 @@
         <h2>Race Review</h2>
         <span flex>
         </span>
-        <md-button aria-label="Authenticate Strava"
-                   ng-href="{{ $ctrl.authUrl }}"
-                   ng-if="!$ctrl.isAuthenticated"
-        >
-            <img class="logo-image" src="static/assets/ConnectWithStrava@2x.png">
-        </md-button>
         <md-button aria-label="Deauthorize Strava"
                    ng-click="$ctrl.deauthorize()"
                    ng-if="$ctrl.isAuthenticated"

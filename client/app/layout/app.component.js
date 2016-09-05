@@ -8,9 +8,9 @@
             controller: AppController
         });
 
-    AppController.$inject = ['$scope', '$cookies', 'stravaService'];
+    AppController.$inject = ['$scope', '$cookies', 'stravaService', '$state'];
 
-    function AppController($scope, $cookies, stravaService) {
+    function AppController($scope, $cookies, stravaService, $state) {
         var ctrl = this;
         ctrl.isAuthenticated = false;
         ctrl.authUrl = '';
@@ -39,6 +39,7 @@
         ctrl.deauthorize = function () {
             ctrl.isAuthenticated = false;
             stravaService.deauthorize();
+            $state.go('welcome');
         }
 
     }

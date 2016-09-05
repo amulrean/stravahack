@@ -15,12 +15,18 @@
             .primaryPalette('deep-orange')
             .accentPalette('blue');
 
+        $mdThemingProvider.theme('dark-grey').backgroundPalette('grey').dark();
+
         // For any unmatched url, send to /home
         $urlRouterProvider.otherwise("/");
 
         $stateProvider
-            .state('home', {
+            .state('welcome', {
                 url: "/",
+                template: "<strava-welcome layout='column' flex></strava-welcome>"
+            })
+            .state('home', {
+                url: "/map",
                 template: "<race-home layout='column' flex></race-home>"
             })
             .state('stravaAuthentication', {
@@ -29,12 +35,13 @@
                     if ($stateParams.code != null) {
                         stravaService.getAccessToken($stateParams.code).then(function (access_token) {
                             stravaService.setAuthenticationToken(access_token);
+                            $state.go('welcome');
                         });
 
                     } else {
                         logger.error("StravaAuthentication Failed");
                     }
-                    $state.go('home');
+
                 }
             });
     }

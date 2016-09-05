@@ -16,6 +16,7 @@
             setAuthenticationToken: setAuthenticationToken,
             getAuthUrl: getAuthUrl,
             deauthorize: deauthorize,
+            removeStravaCookie: removeStravaCookie,
             getProfile: getProfile,
             searchActivities: searchActivities
         };
@@ -83,6 +84,10 @@
             }
         }
 
+        function removeStravaCookie() {
+            $cookies.remove(stravaService.STRAVA_TOKEN_KEY);
+        }
+
         function deauthorize(code) {
 
             return $http.get('api/v1/deauthorize/?',
@@ -95,12 +100,12 @@
                 .catch(getError);
 
             function getSuccess() {
-                return $cookies.remove(stravaService.STRAVA_TOKEN_KEY);
+                return removeStravaCookie();;
             }
 
             function getError(e) {
                 var message = 'Failed to deauthorize from Strava.';
-                $cookies.remove(stravaService.STRAVA_TOKEN_KEY)
+                removeStravaCookie();
                 return stravaErrorHandler(e, message);
             }
         }
