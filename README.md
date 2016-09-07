@@ -37,13 +37,15 @@ https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-an-ub
 - Edit NGINX and Gunicorn files
 https://www.digitalocean.com/community/tutorials/how-to-use-the-django-one-click-install-image?utm_source=Customerio&utm_medium=Email_Internal&utm_campaign=Email_DjangoWelcome
 
-- Copy server/settings_secret from the tempate and add secret values
+- Copy server/settings_secret from the template and add secret values
 
 - run python manage.py migrate
+- run python manage.py collectstatic
 
 - service gunicorn restart
 
 ### Perform updates on server
  - git pull
+ - python manage.py collectstatic
  - sudo service nginx restart
  - service gunicorn restart

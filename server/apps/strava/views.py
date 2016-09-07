@@ -93,21 +93,34 @@ def activity_search(request):
         if 'distance' in streams.keys():
             stream_data['distance'] = streams['distance'].data
 
+        moving_time_minutes = str(activity.moving_time)
+
+        distance_miles = round(unithelper.miles(activity.distance).get_num(), 1)
+
+        kudos = []
+
+        # if activity.kudos is not None:
+        #     for kudo in activity.kudos:
+        #         kudos.append({'firstname': kudo.firstname, 'lastname': kudo.lastname})
+
 
         resp.append({
             'id': activity.id,
             'name': activity.name,
             'description': activity.description,
             'type': activity.type,
-            'moving_time': activity.moving_time,
-            # 'distance': activity.distance,
-            # 'total_elevation_gain': activity.total_elevation_gain,
+            'moving_time': moving_time_minutes,
+            'start_date_local': activity.start_date_local,
+            'distance': distance_miles,
+            # 'coomments': activity.comments,
             'comment_count': activity.comment_count,
+            'kudos': kudos,
             'kudos_count': activity.kudos_count,
-            'splits_metric': activity.splits_metric,
-            'start_latlng': activity.start_latlng,
+            'calories': activity.calories,
+            'location_city': activity.location_city,
+            'location_state': activity.location_state,
+            'location_country': activity.location_country,
             'stream_data': stream_data,
         })
 
-
-    return Response(resp)
+    return Response(reversed(resp))

@@ -11,9 +11,9 @@
             controller: RaceHomeController
         });
 
-    RaceHomeController.$inject = ['stravaService', '$interval', '$stateParams', '$state'];
+    RaceHomeController.$inject = ['stravaService', '$interval', '$stateParams', '$state', '$scope', '$mdToast'];
 
-    function RaceHomeController(stravaService, $interval, $stateParams, $state) {
+    function RaceHomeController(stravaService, $interval, $stateParams, $state, $scope, $mdToast) {
         var ctrl = this;
 
         ctrl.raceList = [];
@@ -26,13 +26,18 @@
         ctrl.isLoadingList = false;
         ctrl.profile = {};
 
+        ctrl.totalActivities = 0;
+        ctrl.totalDistance = 0;
+        ctrl.totalKudos = 0;
+        ctrl.totalComments = 0;
+
+
         ctrl.intervalPromise = undefined;
 
         ctrl.$onInit = function () {
-            if($stateParams.activityType == null ||
+            if ($stateParams.activityType == null ||
                 $stateParams.startDate == null ||
-                $stateParams.endDate == null)
-            {
+                $stateParams.endDate == null) {
                 $state.go('welcome');
             }
 
@@ -49,7 +54,6 @@
 
         function searchActivities() {
             ctrl.isLoadingList = true;
-            console.log($stateParams);
             return stravaService.searchActivities(
                 $stateParams.activityType,
                 $stateParams.startDate,
@@ -59,6 +63,7 @@
                     ctrl.isLoadingList = false;
                     if (data && data.length > 0) {
                         ctrl.raceList = data;
+                        ctrl.playAnimation();
                     } else {
                         $mdToast.show($mdToast.simple().textContent("No Activities found."));
                     }
@@ -80,11 +85,44 @@
             }
         };
 
+        // Run this after changing selected race
+        function addStats() {
+            ctrl.totalActivities = ctrl.totalActivities + 1;
+            ctrl.totalDistance = +ctrl.totalDistance + +ctrl.raceList[ctrl.selectedRace].distance;
+            ctrl.totalDistance = ctrl.totalDistance.toFixed(1);
+            ctrl.totalKudos = +ctrl.totalKudos + +ctrl.raceList[ctrl.selectedRace].kudos_count;
+            ctrl.totalComments = +ctrl.totalComments + +ctrl.raceList[ctrl.selectedRace].comment_count;
+        }
+
+        function showComments() {
+            for (var kudo_key in ctrl.raceList[ctrl.selectedRace].kudos) {
+                var kudo = ctrl.raceList[ctrl.selectedRace].kudos[kudo_key];
+                $mdToast.show(
+                    $mdToast.simple()
+                        .textContent(kudo.firstname)
+                        .position('bottom left')
+                        .hideDelay(100)
+                );
+            }
+
+        }
+
+        // Run this before changing selected race.
+        function subtractStats() {
+            ctrl.totalDistance = +ctrl.totalDistance - +ctrl.raceList[ctrl.selectedRace].distance;
+            ctrl.totalDistance = ctrl.totalDistance.toFixed(1);
+            ctrl.totalKudos = +ctrl.totalKudos - +ctrl.raceList[ctrl.selectedRace].kudos_count;
+            ctrl.totalComments = +ctrl.totalComments - +ctrl.raceList[ctrl.selectedRace].comment_count;
+        }
+
         ctrl.nextRace = function () {
             if (ctrl.selectedRace === null) {
                 ctrl.selectedRace = 0;
+                addStats();
+                showComments();
             } else if (ctrl.selectedRace < ctrl.raceList.length - 1) {
                 ctrl.selectedRace++;
+                addStats();
             } else {
                 if (angular.isDefined(ctrl.intervalPromise)) {
                     $interval.cancel(ctrl.intervalPromise);
@@ -95,6 +133,7 @@
 
         ctrl.previousRace = function () {
             if (ctrl.selectedRace > 0) {
+                subtractStats();
                 ctrl.selectedRace--;
             }
         };

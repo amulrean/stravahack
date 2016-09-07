@@ -44,3 +44,42 @@ race-detail {
 .distanceother {
     background-color: blue
 }
+
+.slide.ng-enter, .slide.ng-leave {
+  transition:1s linear all;
+}
+.slide.ng-enter {
+  transform: translate(0,-100%);
+}
+.slide.ng-enter-active {
+  transform: translate(0,0);
+}
+.slide.ng-leave {
+  transform: translate(0,0);
+}
+.slide.ng-leave-active {
+  transform: translate(0,100%);
+}
+
+.animate-back .slide.ng-enter {
+  transform: translate(0,100%);
+}
+
+/*Here's the new code*/
+.animate-back .slide.ng-enter-active {
+  transform: translate(0,0);
+}
+
+.animate-back .slide.ng-leave-active {
+  transform: translate(0,-100%);
+}
+
+.view-animate.ng-enter {
+  left:100%;
+}
+.view-animate.ng-enter.ng-enter-active {
+  left:0;
+}
+.view-animate.ng-leave.ng-leave-active {
+  left:-100%;
+}

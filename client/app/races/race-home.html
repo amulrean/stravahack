@@ -1,74 +1,64 @@
 <div layout="row" flex>
-    <div layout="column" flex>
-        <div layout="column" layout-align="center center" flex="10">
-            <h1>{{ $ctrl.raceList[$ctrl.selectedRace].name }}</h1>
-            <h3 ng-if="$ctrl.raceList[$ctrl.selectedRace].description.length > 0">
-                {{ $ctrl.raceList[$ctrl.selectedRace].description }}</h3>
-        </div>
+    <div layout="column" class="md-whiteframe-3dp" flex>
         <md-progress-linear md-mode="indeterminate" class="md-accent"
                             ng-show="$ctrl.isLoadingList"></md-progress-linear>
+        <div layout="col" layout-align="center center" flex="20" ng-if="$ctrl.isLoadingList">
+            <h3>Loading Activities...</h3>
+        </div>
+
+        <div layout="row" layout-align="start" flex="20" ng-if="$ctrl.raceList.length > 0">
+            <md-button class="md-primary md-fab md-fab-bottom-left" ng-click="$ctrl.playAnimation()"
+                       ng-if="!$ctrl.intervalPromise">
+                Play
+            </md-button>
+            <md-button class="md-primary md-fab md-fab-bottom-left" ng-click="$ctrl.pauseAnimation()"
+                       ng-if="$ctrl.intervalPromise">
+                Pause
+            </md-button>
+            <div layout="column" layout-align="space-around center" class="md-padding" flex="20">
+                <p ng-if="$ctrl.raceList[$ctrl.selectedRace].start_date_local">
+                    Date: <span
+                        class="md-title">{{ $ctrl.raceList[$ctrl.selectedRace].start_date_local | date : 'longDate' }}</span>
+                </p>
+                <p ng-if="$ctrl.raceList[$ctrl.selectedRace].location_city">
+                    Location: <span class="md-title">{{ $ctrl.raceList[$ctrl.selectedRace].location_city }}
+                    {{ $ctrl.raceList[$ctrl.selectedRace].location_state }}</span>
+                </p>
+            </div>
+            <div layout="column" layout-align="center center" flex>
+                <h1 ng-animate-swap="$ctrl.selectedRace" class="slide md-display-2">
+                    {{ $ctrl.raceList[$ctrl.selectedRace].name }}</h1></div>
+            <div layout="column" layout-align="space-around center" class="md-padding" flex="20">
+                <p ng-if="$ctrl.raceList[$ctrl.selectedRace].distance">
+                    Distance: <span class="md-title">{{ $ctrl.raceList[$ctrl.selectedRace].distance }}</span> miles
+                </p>
+                <p ng-if="$ctrl.raceList[$ctrl.selectedRace].moving_time">
+                    Time: <span class="md-title">{{ $ctrl.raceList[$ctrl.selectedRace].moving_time }}</span></p>
+                <p ng-if="$ctrl.raceList[$ctrl.selectedRace].kudos_count > 0">
+                    Kudos: <span class="md-title">{{ $ctrl.raceList[$ctrl.selectedRace].kudos_count }}</span></p>
+                <p ng-if="$ctrl.raceList[$ctrl.selectedRace].comments_count > 0">
+                    Kudos: <span class="md-title">{{ $ctrl.raceList[$ctrl.selectedRace].comments_count }}</span></p>
+            </div>
+        </div>
         <race-map race-list="$ctrl.raceList"
                   selected-race="$ctrl.selectedRace"
                   clicked-race="$ctrl.clickedRace"
                   on-select="$ctrl.onSelect(race)"
                   on-click-selected="$ctrl.onClickSelected(race)"
-                  layout="column" flex></race-map>
-    </div>
-    <div layout="column" class="md-whiteframe-3dp" flex="30">
-        <div layout="row" layout-align="center center" flex="20">
-            <md-button class="md-primary md-raised" ng-click="$ctrl.previousRace()">
-                Previous Activity
-            </md-button>
-            <md-button class="md-primary md-raised"
-                       ng-click="$ctrl.playAnimation()"
-                       ng-if="!$ctrl.intervalPromise"
-            >
-                Play
-            </md-button>
-            <md-button class="md-primary md-raised"
-                       ng-click="$ctrl.pauseAnimation()"
-                       ng-if="$ctrl.intervalPromise"
-            >
-                Pause
-            </md-button>
-            <md-button class="md-primary md-raised" ng-click="$ctrl.nextRace()">
-                Next Activity
-            </md-button>
-        </div>
-        <div layout="row" class="md-padding">
-            <h3 flex="30">
-                Stats
-            </h3>
-            <h5>
-                Distance: {{ $ctrl.raceList[$ctrl.selectedRace].distance }} miles <br>
-                Time: {{ $ctrl.raceList[$ctrl.selectedRace].moving_time }} <br>
-                Comments: {{ $ctrl.raceList[$ctrl.selectedRace].comments_count }}<br>
-                Kudos: {{ $ctrl.raceList[$ctrl.selectedRace].kudos_count }} <br>
-            </h5>
-        </div>
-        <div layout="column">
-            <div layout="row">
-                <h3 flex="30">
-                    Top Friends:
-                </h3>
-                <h5>
-                    Andrew<br>
-                    Mike<br>
-                    Brian<br>
-                </h5>
-            </div>
-        </div>
-        <div layout="column">
-            <div layout="row">
-                <h3 flex="30">
-                    Top Efforts:
-                </h3>
-                <h5>
-                    1 Mile<br>
-                    5k<br>
-                    10k<br>
-                </h5>
-            </div>
+                  layout="column" flex>
+        </race-map>
+        <md-progress-linear md-mode="determinate" class="md-accent" value="{{ $ctrl.selectedRace / $ctrl.raceList.length  * 100}}"
+                            ng-show="$ctrl.intervalPromise"></md-progress-linear>
+        <div layout="row" layout-align="space-around center" class="md-padding">
+            <p class="md-title" ng-if="$ctrl.totalActivities > 0">Training Totals:</p>
+            <p class="md-headline" ng-if="$ctrl.totalActivities > 0"><b class="md-display-2">
+                {{ $ctrl.totalActivities }}</b> Activities</p>
+            <p class="md-headline" ng-if="$ctrl.totalDistance > 0"><b class="md-display-2">{{ $ctrl.totalDistance }}</b>
+                Miles</p>
+            <p class="md-headline" ng-if="$ctrl.totalKudos > 0"><b class="md-display-2">{{ $ctrl.totalKudos }}</b> Kudos
+            </p>
+            <p class="md-headline" ng-if="$ctrl.totalComments > 0"><b class="md-display-2">{{ $ctrl.totalKudos }}</b>
+                Comments</p>
         </div>
     </div>
 </div>

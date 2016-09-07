@@ -319,22 +319,26 @@
             updateBounds(mapObject, routeBounds);
 
 
-            mapObject.paths['selectedRace'].latlngs = [pathLatLngs[0][0], pathLatLngs[0][1]];
+
+
 
             $interval(function () {
-                var oldRadius = mapObject.paths['selectedRace'].radius;
-                mapObject.paths['selectedRace'].radius = oldRadius - 10;
-            }, 100, 18).then(function () {
-                    $interval(function () {
-                        var currentLatlon = pathLatLngs.shift();
-                        var lat = currentLatlon[0];
-                        var lng = currentLatlon[1];
-                        mapObject.paths['raceDetailRoute'].latlngs.push({lat: lat, lng: lng});
-                        mapObject.paths['selectedRace'].latlngs = [lat, lng];
-                    }, 50, pathLatLngs.length);
-                }
-            )
-            ;
+            }, 500, 1).then(function () {
+                $interval(function () {
+                    mapObject.paths['selectedRace'].latlngs = [pathLatLngs[0][0], pathLatLngs[0][1]];
+                    var oldRadius = mapObject.paths['selectedRace'].radius;
+                    mapObject.paths['selectedRace'].radius = oldRadius - 1;
+                }, 5, 180).then(function () {
+                        $interval(function () {
+                            var currentLatlon = pathLatLngs.shift();
+                            var lat = currentLatlon[0];
+                            var lng = currentLatlon[1];
+                            mapObject.paths['raceDetailRoute'].latlngs.push({lat: lat, lng: lng});
+                            mapObject.paths['selectedRace'].latlngs = [lat, lng];
+                        }, 50, pathLatLngs.length);
+                    }
+                )
+            });
 
 
         }
