@@ -1,8 +1,15 @@
-<div layout="column" layout-align="start center" flex="80">
+<div layout="column"  flex="70">
 
-    <div class="md-whiteframe-9dp md-padding" layout="column" layout-align="center center">
-        <h1>Race Review</h1>
-        <p>Race review will give you an animated tour of your training cycle.</p>
+    <div class="md-whiteframe-9dp md-padding" layout="row" layout-align=" center">
+        <div layout="column" class="md-padding" flex>
+            <h1>Race Retrospective</h1>
+            <p>Relive the ups and the downs of a training cycle with an animated tour of
+        your hard fought miles, well deserved kudos and innovative routes all
+        leading up to the final Race payoff.</p>
+        </div>
+        <div layout="column">
+            <img ng-src="static/assets/screen.png" style="height: 200px; width: 200px">
+        </div>
     </div>
 
     <div layout="column" ng-if="!$ctrl.isAuthenticated" layout="column" layout-align="center center">
@@ -14,7 +21,7 @@
             <img class="logo-image" src="static/assets/ConnectWithStrava@2x.png">
         </md-button>
     </div>
-    <div layout="column" ng-if="$ctrl.isAuthenticated && $ctrl.profile">
+    <div layout="column" ng-if="$ctrl.isAuthenticated && $ctrl.profile" flex="80">
         <md-card md-theme="dark-grey" class="md-padding">
             <md-card-title>
                 <md-card-title-text>
@@ -29,25 +36,28 @@
             </md-card-title>
         </md-card>
 
-        <p>Select your race parameters below.</p>
-        <form ng-submit="$ctrl.submit()" class="md-whiteframe-1dp md-padding" >
+        <p>Which Race training cycle would you like to relive?</p>
+        <form ng-submit="$ctrl.submit()" layout="row" layout-align="space-around" class="md-whiteframe-1dp md-padding" >
             <div>
-                <h4> Select Activity Type</h4>
+                <h4>Activity Type: </h4>
                 <md-radio-group ng-model="$ctrl.activityType">
                     <md-radio-button value="Run" class="md-primary">Run</md-radio-button>
                     <md-radio-button value="Ride">Ride</md-radio-button>
                 </md-radio-group>
             </div>
 
-            <div>
+            <div ng-show="$ctrl.activityType">
                 <h4>When did you start Training?</h4>
-                <md-datepicker ng-model="$ctrl.startDate" md-placeholder="Start Date"></md-datepicker>
+                <md-datepicker ng-model="$ctrl.startDate" md-placeholder="Start Date" md-open-on-focus></md-datepicker>
             </div>
-            <div>
-                <h4>When was your Target Race</h4>
-                <md-datepicker ng-model="$ctrl.endDate" md-placeholder="End Date"></md-datepicker>
+            <div ng-show="$ctrl.startDate">
+                <h4>When was your Target Race?</h4>
+                <md-datepicker ng-model="$ctrl.endDate" md-placeholder="End Date" md-open-on-focus></md-datepicker>
             </div>
-            <md-button class="md-raised md-primary" type="submit">Let's Go!</md-button>
+            <div ng-show="$ctrl.endDate">
+                <md-button class="md-raised md-primary" type="submit">Let's Go!</md-button>
+            </div>
+
         </form>
     </div>
 

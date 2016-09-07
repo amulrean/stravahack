@@ -65,7 +65,8 @@
                         ctrl.raceList = data;
                         ctrl.playAnimation();
                     } else {
-                        $mdToast.show($mdToast.simple().textContent("No Activities found."));
+                        $mdToast.show($mdToast.simple().textContent("No Activities found for selected dates."));
+                        $state.go('welcome');
                     }
                     return ctrl.raceList;
                 });

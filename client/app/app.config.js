@@ -23,7 +23,7 @@
         $stateProvider
             .state('welcome', {
                 url: "/",
-                template: "<strava-welcome layout='column' flex></strava-welcome>"
+                template: "<strava-welcome layout='row' layout-align=' center' flex></strava-welcome>"
             })
             .state('visualize', {
                 url: "/visualize?activityType&startDate&endDate",
