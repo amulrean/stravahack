@@ -1,5 +1,5 @@
-<div layout="row" flex>
-    <div layout="column" class="md-whiteframe-3dp" flex>
+<div layout="row" layout-align="center" flex>
+    <div layout="column" class="md-whiteframe-3dp" flex-offset-sm="5" flex>
         <md-progress-linear md-mode="indeterminate" class="md-accent"
                             ng-show="$ctrl.isLoadingList"></md-progress-linear>
         <div layout="col" layout-align="center center" flex="20" ng-if="$ctrl.isLoadingList">
@@ -36,8 +36,8 @@
                     Time: <span class="md-title">{{ $ctrl.raceList[$ctrl.selectedRace].moving_time }}</span></p>
                 <p ng-if="$ctrl.raceList[$ctrl.selectedRace].kudos_count > 0">
                     Kudos: <span class="md-title">{{ $ctrl.raceList[$ctrl.selectedRace].kudos_count }}</span></p>
-                <p ng-if="$ctrl.raceList[$ctrl.selectedRace].comments_count > 0">
-                    Kudos: <span class="md-title">{{ $ctrl.raceList[$ctrl.selectedRace].comments_count }}</span></p>
+                <p ng-if="$ctrl.raceList[$ctrl.selectedRace].comment_count > 0">
+                    Comments: <span class="md-title">{{ $ctrl.raceList[$ctrl.selectedRace].comment_count }}</span></p>
             </div>
         </div>
         <race-map race-list="$ctrl.raceList"
@@ -49,7 +49,7 @@
         </race-map>
         <md-progress-linear md-mode="determinate" class="md-accent" value="{{ $ctrl.selectedRace / $ctrl.raceList.length  * 100}}"
                             ng-show="$ctrl.intervalPromise"></md-progress-linear>
-        <div layout="row" layout-align="space-around center" class="md-padding">
+        <div layout="row" layout-align="space-around center" class="md-padding" flex="20">
             <p class="md-title" ng-if="$ctrl.totalActivities > 0">Training Totals:</p>
             <p class="md-headline" ng-if="$ctrl.totalActivities > 0"><b class="md-display-2">
                 {{ $ctrl.totalActivities }}</b> Activities</p>
@@ -57,7 +57,7 @@
                 Miles</p>
             <p class="md-headline" ng-if="$ctrl.totalKudos > 0"><b class="md-display-2">{{ $ctrl.totalKudos }}</b> Kudos
             </p>
-            <p class="md-headline" ng-if="$ctrl.totalComments > 0"><b class="md-display-2">{{ $ctrl.totalKudos }}</b>
+            <p class="md-headline" ng-if="$ctrl.totalComments > 0"><b class="md-display-2">{{ $ctrl.totalComments }}</b>
                 Comments</p>
         </div>
     </div>

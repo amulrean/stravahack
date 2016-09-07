@@ -11,9 +11,9 @@
             controller: StravaWelcomeController
         });
 
-    StravaWelcomeController.$inject = ['stravaService', '$scope', '$cookies', '$state'];
+    StravaWelcomeController.$inject = ['stravaService', '$scope', '$cookies', '$state', '$filter'];
 
-    function StravaWelcomeController(stravaService, $scope, $cookies, $state) {
+    function StravaWelcomeController(stravaService, $scope, $cookies, $state, $filter) {
 
         var ctrl = this;
         ctrl.isAuthenticated = false;
@@ -55,7 +55,14 @@
         });
 
         ctrl.submit = function () {
-            $state.go('visualize', {activityType: ctrl.activityType, startDate: ctrl.startDate, endDate: ctrl.endDate});
+            var dateFormat = 'MM-dd-yyyy';
+            var formattedStart = $filter('date')(ctrl.startDate, dateFormat);
+            var formattedEnd = $filter('date')(ctrl.endDate, dateFormat);
+            $state.go('visualize', {
+                activityType: ctrl.activityType,
+                startDate: formattedStart,
+                endDate: formattedEnd
+            });
         };
     }
 })();

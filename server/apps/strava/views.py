@@ -61,13 +61,14 @@ def activity_search(request):
 
     # u'Mon Sep 05 2016 00:00:00 GMT-0400 (EDT)'
 
-    format_str = '%a %b %d %Y'
-    start_str = request.query_params.get('start_date')[0:15]
-    end_str = request.query_params.get('end_date')[0:15]
+    format_str = '%m-%d-%Y'
+    start_str = request.query_params.get('start_date')
+    end_str = request.query_params.get('end_date')
 
     activity_type = request.query_params.get('activity_type')
     start_date = datetime.strptime(start_str, format_str)
-    end_date = datetime.strptime(end_str, format_str)
+    # Add a day so that we don't miss activities on that day
+    end_date = datetime.strptime(end_str, format_str) + timedelta(days=1)
 
     activities = client.get_activities(after=start_date, before=end_date)
     resp = []
