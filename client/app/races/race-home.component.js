@@ -19,12 +19,10 @@
         ctrl.raceList = [];
         ctrl.raceTotal = 0;
         ctrl.selectedRace = null;
-        ctrl.clickedRace = null;
         ctrl.searchTerm = '';
         ctrl.startDate = null;
         ctrl.endDate = null;
         ctrl.isLoadingList = false;
-        ctrl.profile = {};
 
         ctrl.totalActivities = 0;
         ctrl.totalDistance = 0;
@@ -37,19 +35,13 @@
         ctrl.$onInit = function () {
             if ($stateParams.activityType == null ||
                 $stateParams.startDate == null ||
-                $stateParams.endDate == null) {
+                $stateParams.endDate == null ||
+                !stravaService.getIsAuthenticated()
+            ) {
                 $state.go('welcome');
             }
 
-            if (stravaService.getIsAuthenticated()) {
-                searchActivities();
-
-                stravaService.getProfile()
-                    .then(function (data) {
-                        ctrl.profile = data;
-                        return ctrl.profile;
-                    });
-            }
+            searchActivities();
         };
 
         function searchActivities() {
