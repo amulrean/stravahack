@@ -47,7 +47,7 @@
                   on-click-selected="$ctrl.onClickSelected(race)"
                   layout="column" flex>
         </race-map>
-        <md-progress-linear md-mode="determinate" class="md-accent" value="{{ $ctrl.selectedRace / $ctrl.raceList.length  * 100}}"
+        <md-progress-linear md-mode="determinate" class="md-accent" value="{{ ($ctrl.selectedRace +1) / $ctrl.raceList.length  * 100}}"
                             ng-show="$ctrl.intervalPromise"></md-progress-linear>
         <div layout="row" layout-align="space-around center" class="md-padding" flex="20">
             <p class="md-title" ng-if="$ctrl.totalActivities > 0">Training Totals:</p>

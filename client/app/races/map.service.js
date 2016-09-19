@@ -305,40 +305,40 @@
                 color: '#800000'
             };
 
-            var outsideBoundsLatLongArray = [[180, 180], [-180, -180]];
+            if (raceObj.hasOwnProperty("stream_data")) {
 
-            var pathLatLngs = angular.copy(raceObj.stream_data.latlng);
+                var outsideBoundsLatLongArray = [[180, 180], [-180, -180]];
 
-            for (var latlonId in pathLatLngs) {
-                var currentLatlon = pathLatLngs[latlonId];
-                var lat = currentLatlon[0];
-                var lng = currentLatlon[1];
-                extendBoundsIfNeeded(outsideBoundsLatLongArray, lat, lng);
-            }
-            var routeBounds = leafletBoundsHelpers.createBoundsFromArray(outsideBoundsLatLongArray);
-            updateBounds(mapObject, routeBounds);
+                var pathLatLngs = angular.copy(raceObj.stream_data.latlng);
+
+                for (var latlonId in pathLatLngs) {
+                    var currentLatlon = pathLatLngs[latlonId];
+                    var lat = currentLatlon[0];
+                    var lng = currentLatlon[1];
+                    extendBoundsIfNeeded(outsideBoundsLatLongArray, lat, lng);
+                }
+                var routeBounds = leafletBoundsHelpers.createBoundsFromArray(outsideBoundsLatLongArray);
+                updateBounds(mapObject, routeBounds);
 
 
-
-
-
-            $interval(function () {
-            }, 500, 1).then(function () {
                 $interval(function () {
-                    mapObject.paths['selectedRace'].latlngs = [pathLatLngs[0][0], pathLatLngs[0][1]];
-                    var oldRadius = mapObject.paths['selectedRace'].radius;
-                    mapObject.paths['selectedRace'].radius = oldRadius - 1;
-                }, 5, 180).then(function () {
-                        $interval(function () {
-                            var currentLatlon = pathLatLngs.shift();
-                            var lat = currentLatlon[0];
-                            var lng = currentLatlon[1];
-                            mapObject.paths['raceDetailRoute'].latlngs.push({lat: lat, lng: lng});
-                            mapObject.paths['selectedRace'].latlngs = [lat, lng];
-                        }, 50, pathLatLngs.length);
-                    }
-                )
-            });
+                }, 500, 1).then(function () {
+                    $interval(function () {
+                        mapObject.paths['selectedRace'].latlngs = [pathLatLngs[0][0], pathLatLngs[0][1]];
+                        var oldRadius = mapObject.paths['selectedRace'].radius;
+                        mapObject.paths['selectedRace'].radius = oldRadius - 1;
+                    }, 5, 180).then(function () {
+                            $interval(function () {
+                                var currentLatlon = pathLatLngs.shift();
+                                var lat = currentLatlon[0];
+                                var lng = currentLatlon[1];
+                                mapObject.paths['raceDetailRoute'].latlngs.push({lat: lat, lng: lng});
+                                mapObject.paths['selectedRace'].latlngs = [lat, lng];
+                            }, 50, pathLatLngs.length);
+                        }
+                    )
+                });
+            }
 
 
         }

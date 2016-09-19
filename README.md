@@ -19,6 +19,9 @@ http://localhost:8000/
 - Copy File *server/settings_secret.py.template* to *server/settings_secret.py*
 - Fill in Strava Client Id and Client Secret
 
+### Connect to Digital Ocean Droplet
+
+- ssh root@<droplet_ip>
 
 ### Install on Digital Ocean
 

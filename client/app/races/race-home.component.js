@@ -169,7 +169,7 @@
             if (ctrl.selectedRace === null) {
                 ctrl.selectedRace = 0;
                 addStats();
-                showComments();
+                // showComments();
             } else if (ctrl.selectedRace < ctrl.raceList.length - 1) {
                 ctrl.selectedRace++;
                 addStats();
