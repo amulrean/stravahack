@@ -18,7 +18,8 @@
             deauthorize: deauthorize,
             removeStravaCookie: removeStravaCookie,
             getProfile: getProfile,
-            searchActivities: searchActivities
+            searchActivities: searchActivities,
+            activityData: activityData
         };
         return stravaService;
 
@@ -139,6 +140,26 @@
                         activity_type: activityType,
                         start_date: start,
                         end_date: end
+                    }
+                })
+                .then(listSuccess)
+                .catch(listError);
+            function listSuccess(data) {
+                return data.data;
+            }
+
+            function listError(e) {
+                var message = 'Failed to get strava activities';
+                return stravaErrorHandler(e, message);
+            }
+        }
+
+        function activityData(activityIds) {
+            return $http.get('api/v1/activity-data/?',
+                {
+                    params: {
+                        access_token: $cookies.get(stravaService.STRAVA_TOKEN_KEY),
+                        activity_ids: JSON.stringify(activityIds)
                     }
                 })
                 .then(listSuccess)

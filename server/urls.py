@@ -20,7 +20,7 @@ from rest_framework import routers
 
 from server.views import IndexView
 from server.apps.strava.views import get_authorization_url, get_access_token, deauthorize, \
-     get_athlete_profile, activity_search
+     get_athlete_profile, activity_search, activity_data
 
 router = routers.DefaultRouter()
 
@@ -34,6 +34,7 @@ urlpatterns = [
     url(r'^api/v1/deauthorize', deauthorize),
     url(r'^api/v1/profile', get_athlete_profile),
     url(r'^api/v1/activity-search', activity_search),
+    url(r'^api/v1/activity-data', activity_data),
 
     # Django Admin Endpoints
     url(r'^admin/', admin.site.urls),

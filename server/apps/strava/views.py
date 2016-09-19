@@ -1,3 +1,5 @@
+import json
+
 from django.http import HttpResponseRedirect
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -55,11 +57,8 @@ def get_athlete_profile(request):
 @api_view()
 def activity_search(request):
 
-
     access_token = request.query_params.get('access_token')
     client = Client(access_token)
-
-    # u'Mon Sep 05 2016 00:00:00 GMT-0400 (EDT)'
 
     format_str = '%m-%d-%Y'
     start_str = request.query_params.get('start_date')
@@ -72,13 +71,54 @@ def activity_search(request):
 
     activities = client.get_activities(after=start_date, before=end_date)
     resp = []
+
     for activity in activities:
         if activity.type != activity_type:
             continue
+
+        moving_time_minutes = str(activity.moving_time)
+
+        distance_miles = round(unithelper.miles(activity.distance).get_num(), 1)
+
+        resp.append({
+            'id': activity.id,
+            'name': activity.name,
+            'description': activity.description,
+            'type': activity.type,
+            'moving_time': moving_time_minutes,
+            'start_date_local': activity.start_date_local,
+            'distance': distance_miles,
+            'comment_count': activity.comment_count,
+            'kudos_count': activity.kudos_count,
+            'athlete_count': activity.athlete_count,
+            'total_photo_count': activity.total_photo_count,
+            'achievement_count': activity.achievement_count,
+            'calories': activity.calories,
+            'location_city': activity.location_city,
+            'location_state': activity.location_state,
+            'location_country': activity.location_country,
+        })
+
+    return Response(reversed(resp))
+
+
+@api_view()
+def activity_data(request):
+
+    access_token = request.query_params.get('access_token')
+    client = Client(access_token)
+
+    # Decode json string of ids sent by angular
+    activity_ids = json.loads(request.query_params.get('activity_ids'))
+
+    resp = {}
+
+    for activity_id in activity_ids:
+
         # stream_types = ['time', 'latlng', 'altitude', 'heartrate', 'temp', ]
         stream_types = ['latlng']
         try:
-            streams = client.get_activity_streams(activity.id, types=stream_types, resolution='low')
+            streams = client.get_activity_streams(activity_id, types=stream_types, resolution='low')
         except:
             # found activity with no lat lngs
             continue
@@ -90,38 +130,36 @@ def activity_search(request):
             if stream_type in streams.keys():
                 stream_data[stream_type] = streams[stream_type].data
 
+        kudos = []
+
+        activity_kudos = client.get_activity_kudos(activity_id=activity_id)
+
+        if activity_kudos is not None:
+            for kudo in activity_kudos:
+                kudos.append({'firstname': kudo.firstname,
+                              'lastname': kudo.lastname,
+                              'profile': kudo.profile})
+
+        comments = []
+
+        activity_comments = client.get_activity_comments(activity_id=activity_id)
+
+        if activity_comments is not None:
+            for comment in activity_comments:
+                comments.append({'firstname': comment.athlete.firstname,
+                                 'lastname': comment.athlete.lastname,
+                                 'profile': comment.athlete.profile,
+                                 'text': comment.text})
+
         # Distance seems to be a seprate stream
         if 'distance' in streams.keys():
             stream_data['distance'] = streams['distance'].data
 
-        moving_time_minutes = str(activity.moving_time)
-
-        distance_miles = round(unithelper.miles(activity.distance).get_num(), 1)
-
-        kudos = []
-
-        # if activity.kudos is not None:
-        #     for kudo in activity.kudos:
-        #         kudos.append({'firstname': kudo.firstname, 'lastname': kudo.lastname})
-
-
-        resp.append({
-            'id': activity.id,
-            'name': activity.name,
-            'description': activity.description,
-            'type': activity.type,
-            'moving_time': moving_time_minutes,
-            'start_date_local': activity.start_date_local,
-            'distance': distance_miles,
-            # 'coomments': activity.comments,
-            'comment_count': activity.comment_count,
+        resp[activity_id] = {
+            'id': activity_id,
+            'comments': comments,
             'kudos': kudos,
-            'kudos_count': activity.kudos_count,
-            'calories': activity.calories,
-            'location_city': activity.location_city,
-            'location_state': activity.location_state,
-            'location_country': activity.location_country,
             'stream_data': stream_data,
-        })
+        }
 
-    return Response(reversed(resp))
+    return Response(resp)
