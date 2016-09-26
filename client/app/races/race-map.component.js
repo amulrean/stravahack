@@ -5,8 +5,7 @@
         .module('app.races.components')
         .component('raceMap', {
             bindings: {
-                raceList: '<',
-                selectedRace: '<',
+                mapObject: '=',
             },
             templateUrl: 'static/app/races/race-map.html',
             controller: RaceMapController
@@ -17,7 +16,6 @@
     function RaceMapController(mapService, $scope) {
         var ctrl = this;
 
-        ctrl.mapObject = {};
         ctrl.initialBoundsSet = false;
 
         ctrl.$onInit = function () {
@@ -40,15 +38,6 @@
 
             mapService.updateBounds(ctrl.mapObject, mapService.bounds.northEasterUS);
 
-
-        };
-
-        ctrl.$onChanges = function (changesObj) {
-
-            if (changesObj.selectedRace && changesObj.selectedRace.currentValue !== null &&
-                changesObj.selectedRace.currentValue != changesObj.selectedRace.previousValue) {
-                mapService.updateSelectedRacePath(ctrl.mapObject, ctrl.raceList[changesObj.selectedRace.currentValue]);
-            }
         };
 
 

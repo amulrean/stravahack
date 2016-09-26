@@ -11,21 +11,21 @@
             controller: RaceHomeController
         });
 
-    RaceHomeController.$inject = ['stravaService', '$interval', '$stateParams', '$state', '$scope', '$mdToast'];
+    RaceHomeController.$inject = ['stravaService', 'mapService', '$interval', '$stateParams', '$state', '$mdToast'];
 
-    function RaceHomeController(stravaService, $interval, $stateParams, $state, $scope, $mdToast) {
+    function RaceHomeController(stravaService, mapService, $interval, $stateParams, $state, $mdToast) {
         var ctrl = this;
 
         var numberOfRaceDataToGet = 10;
 
+        ctrl.mapObject = {};
+
         ctrl.raceList = [];
         ctrl.raceListKeysNeedData = [];
         ctrl.raceTotal = 0;
-        ctrl.selectedRace = null;
-        ctrl.searchTerm = '';
-        ctrl.startDate = null;
-        ctrl.endDate = null;
+        ctrl.selectedRace = 0;
         ctrl.isLoadingList = false;
+        ctrl.finishedAnimation = false;
 
         ctrl.totalActivities = 0;
         ctrl.totalDistance = 0;
@@ -48,6 +48,7 @@
 
         function searchActivities() {
             ctrl.isLoadingList = true;
+            ctrl.isLoadingRaceDetails = true;
             return stravaService.searchActivities(
                 $stateParams.activityType,
                 $stateParams.startDate,
@@ -58,6 +59,7 @@
         }
 
         function getSearchActivitiesSuccess(data) {
+            ctrl.isLoadingList = false;
             if (data && data.length > 0) {
                 ctrl.raceList = data;
 
@@ -69,7 +71,6 @@
                     .catch(getSearchError);
 
             } else {
-                ctrl.isLoadingList = false;
                 $mdToast.show($mdToast.simple().textContent("No Activities found for selected dates."));
                 $state.go('welcome');
             }
@@ -79,7 +80,7 @@
         function getActivityDataSuccess(data) {
 
             updateRaceListWithData(data);
-            ctrl.isLoadingList = false;
+            ctrl.isLoadingRaceDetails = false;
             ctrl.playAnimation();
 
         }
@@ -117,15 +118,37 @@
             return false
         }
 
+        function animateIntroWait() {
+            mapService.clearOldRace(ctrl.mapObject);
+            mapService.setRaceOutBounds(ctrl.mapObject, ctrl.raceList[ctrl.selectedRace]);
+            ctrl.intervalPromise = mapService.introWait(ctrl.mapObject, ctrl.raceList[ctrl.selectedRace]);
+            ctrl.intervalPromise.then(animateIntroStartCircle);
+        }
+
+        function animateIntroStartCircle() {
+            ctrl.intervalPromise = mapService.introStartCircle(ctrl.mapObject, ctrl.raceList[ctrl.selectedRace]);
+            ctrl.intervalPromise.then(animateRaceRouteDisplay);
+        }
+
+        function animateRaceRouteDisplay() {
+            ctrl.intervalPromise = mapService.raceRouteDisplay(ctrl.mapObject, ctrl.raceList[ctrl.selectedRace]);
+            ctrl.intervalPromise.then(animatePostRouteWait);
+        }
+
+        function animatePostRouteWait() {
+            ctrl.intervalPromise = mapService.postRouteWait(ctrl.mapObject, ctrl.raceList[ctrl.selectedRace]);
+            ctrl.intervalPromise.then(ctrl.nextRace);
+        }
+
 
         ctrl.playAnimation = function () {
-            ctrl.nextRace();
-            ctrl.intervalPromise = $interval(function () {
-                ctrl.nextRace();
-                if (shouldGetNextDataSets()) {
-                    getNextSetOfRaceData();
-                }
-            }, 10000);
+            animateIntroWait();
+        };
+
+        ctrl.restartAnimation = function () {
+            ctrl.selectedRace = 0;
+            ctrl.finishedAnimation = false;
+            animateIntroWait();
         };
 
         ctrl.pauseAnimation = function () {
@@ -166,46 +189,21 @@
         }
 
         ctrl.nextRace = function () {
-            if (ctrl.selectedRace === null) {
-                ctrl.selectedRace = 0;
-                addStats();
-                // showComments();
-            } else if (ctrl.selectedRace < ctrl.raceList.length - 1) {
+            if (ctrl.selectedRace < ctrl.raceList.length - 1) {
                 ctrl.selectedRace++;
                 addStats();
+                animateIntroWait();
             } else {
-                if (angular.isDefined(ctrl.intervalPromise)) {
-                    $interval.cancel(ctrl.intervalPromise);
-                    ctrl.intervalPromise = undefined;
-                }
+                ctrl.finishedAnimation = true;
             }
         };
+
 
         ctrl.previousRace = function () {
             if (ctrl.selectedRace > 0) {
                 subtractStats();
                 ctrl.selectedRace--;
             }
-        };
-
-        ctrl.search = function () {
-            searchActivities();
-        };
-
-        ctrl.clearSearch = function () {
-            ctrl.searchTerm = '';
-            ctrl.startDate = null;
-            ctrl.endDate = null;
-            ctrl.selectedRace = null;
-            return searchActivities();
-        };
-
-        ctrl.onSelect = function (race) {
-            ctrl.selectedRace = race;
-        };
-
-        ctrl.onClickSelected = function (race) {
-            ctrl.clickedRace = angular.copy(race);
         };
 
     }

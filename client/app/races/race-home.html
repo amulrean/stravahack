@@ -1,19 +1,23 @@
 <div layout="row" layout-align="center" flex>
     <div layout="column" class="md-whiteframe-3dp" flex-offset-sm="5" flex>
         <md-progress-linear md-mode="indeterminate" class="md-accent"
-                            ng-show="$ctrl.isLoadingList"></md-progress-linear>
+                            ng-show="$ctrl.isLoadingRaceDetails"></md-progress-linear>
         <div layout="col" layout-align="center center" flex="20" ng-if="$ctrl.isLoadingList">
             <h3>Loading Activities...</h3>
         </div>
 
         <div layout="row" layout-align="start" flex="20" ng-if="$ctrl.raceList.length > 0">
             <md-button class="md-primary md-fab md-fab-bottom-left" ng-click="$ctrl.playAnimation()"
-                       ng-if="!$ctrl.intervalPromise">
+                       ng-if="!$ctrl.intervalPromise && !$ctrl.finishedAnimation">
                 Play
             </md-button>
             <md-button class="md-primary md-fab md-fab-bottom-left" ng-click="$ctrl.pauseAnimation()"
-                       ng-if="$ctrl.intervalPromise">
+                       ng-if="$ctrl.intervalPromise && !$ctrl.finishedAnimation">
                 Pause
+            </md-button>
+            <md-button class="md-primary md-fab md-fab-bottom-left" ng-click="$ctrl.restartAnimation()"
+                       ng-if="$ctrl.finishedAnimation">
+                Replay
             </md-button>
             <div layout="column" layout-align="space-around center" class="md-padding" flex="20">
                 <p ng-if="$ctrl.raceList[$ctrl.selectedRace].start_date_local">
@@ -40,15 +44,9 @@
                     Comments: <span class="md-title">{{ $ctrl.raceList[$ctrl.selectedRace].comment_count }}</span></p>
             </div>
         </div>
-        <race-map race-list="$ctrl.raceList"
-                  selected-race="$ctrl.selectedRace"
-                  clicked-race="$ctrl.clickedRace"
-                  on-select="$ctrl.onSelect(race)"
-                  on-click-selected="$ctrl.onClickSelected(race)"
-                  layout="column" flex>
-        </race-map>
+        <race-map map-object="$ctrl.mapObject" layout="column" flex></race-map>
         <md-progress-linear md-mode="determinate" class="md-accent" value="{{ ($ctrl.selectedRace +1) / $ctrl.raceList.length  * 100}}"
-                            ng-show="$ctrl.intervalPromise"></md-progress-linear>
+        ></md-progress-linear>
         <div layout="row" layout-align="space-around center" class="md-padding" flex="20">
             <p class="md-title" ng-if="$ctrl.totalActivities > 0">Training Totals:</p>
             <p class="md-headline" ng-if="$ctrl.totalActivities > 0"><b class="md-display-2">
