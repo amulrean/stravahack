@@ -48,7 +48,7 @@ https://www.digitalocean.com/community/tutorials/how-to-use-the-django-one-click
 - service gunicorn restart
 
 ### Perform updates on server
- - git pull
- - python manage.py collectstatic
- - sudo service nginx restart
- - service gunicorn restart
+
+- cd /home/django/stravahack/
+- chmod redeploy.sh
+- ./redeploy.sh
