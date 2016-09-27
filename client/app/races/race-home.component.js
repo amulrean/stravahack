@@ -25,6 +25,7 @@
         ctrl.raceTotal = 0;
         ctrl.selectedRace = 0;
         ctrl.isLoadingList = false;
+        ctrl.isLoadingRaceDetails = false;
         ctrl.finishedAnimation = false;
 
         ctrl.totalActivities = 0;
@@ -62,11 +63,10 @@
             ctrl.isLoadingList = false;
             if (data && data.length > 0) {
                 ctrl.raceList = data;
+                addStats();
 
-                for (var key in ctrl.raceList) {
-                    ctrl.raceListKeysNeedData.push(ctrl.raceList[key].id)
-                }
-                stravaService.activityData(ctrl.raceListKeysNeedData.splice(0, numberOfRaceDataToGet))
+
+                stravaService.activityData(ctrl.raceList[0])
                     .then(getActivityDataSuccess)
                     .catch(getSearchError);
 
@@ -81,6 +81,7 @@
 
             updateRaceListWithData(data);
             ctrl.isLoadingRaceDetails = false;
+            getNextSetOfRaceData();
             ctrl.playAnimation();
 
         }
@@ -90,37 +91,42 @@
         }
 
         function updateRaceListWithData(data) {
-            for (var dataKey in data) {
-                for (var raceKey in ctrl.raceList) {
-                    if (ctrl.raceList[raceKey].id == dataKey) {
-                        angular.extend(ctrl.raceList[raceKey], data[dataKey]);
-                        break;
-                    }
+            for (var raceKey in ctrl.raceList) {
+                if (ctrl.raceList[raceKey].id == data.id) {
+                    angular.extend(ctrl.raceList[raceKey], data);
+                    break;
                 }
             }
         }
 
         function getNextSetOfRaceData() {
-            stravaService.activityData(ctrl.raceListKeysNeedData.splice(0, numberOfRaceDataToGet))
-                .then(getActivityDataBackgroundSuccess)
-                .catch(getSearchError);
+            if (ctrl.selectedRace < ctrl.raceList.length) {
+                var upperLimit = Math.min(ctrl.raceList.length, ctrl.selectedRace + numberOfRaceDataToGet);
+                for (var current = ctrl.selectedRace + 1; current < upperLimit; current++) {
+                    if (!angular.isDefined(ctrl.raceList[current].stream_data)) {
+                        stravaService.activityData(ctrl.raceList[current])
+                            .then(getActivityDataBackgroundSuccess)
+                            .catch(getSearchError);
+                    }
+                }
+            }
         }
 
         function getActivityDataBackgroundSuccess(data) {
             updateRaceListWithData(data);
         }
 
-        function shouldGetNextDataSets() {
-            if (ctrl.raceListKeysNeedData.length > 0 &&
-                ctrl.raceList[ctrl.selectedRace + Math.floor(numberOfRaceDataToGet/2)].stream_data ==null) {
-                return true;
-            }
-            return false
-        }
-
         function animateIntroWait() {
-            mapService.clearOldRace(ctrl.mapObject);
-            mapService.setRaceOutBounds(ctrl.mapObject, ctrl.raceList[ctrl.selectedRace]);
+
+            if (angular.equals(ctrl.raceList[ctrl.selectedRace].isPaused, true)) {
+                ctrl.raceList[ctrl.selectedRace].isPaused = false;
+            }
+            else {
+                mapService.clearOldRace(ctrl.mapObject);
+                mapService.setRaceOutBounds(ctrl.mapObject, ctrl.raceList[ctrl.selectedRace]);
+            }
+
+
             ctrl.intervalPromise = mapService.introWait(ctrl.mapObject, ctrl.raceList[ctrl.selectedRace]);
             ctrl.intervalPromise.then(animateIntroStartCircle);
         }
@@ -148,6 +154,8 @@
         ctrl.restartAnimation = function () {
             ctrl.selectedRace = 0;
             ctrl.finishedAnimation = false;
+            resetStats();
+            addStats();
             animateIntroWait();
         };
 
@@ -155,8 +163,17 @@
             if (angular.isDefined(ctrl.intervalPromise)) {
                 $interval.cancel(ctrl.intervalPromise);
                 ctrl.intervalPromise = undefined;
+                ctrl.raceList[ctrl.selectedRace].isPaused = true;
             }
         };
+
+        function resetStats() {
+            ctrl.totalActivities = 0;
+            ctrl.totalDistance = 0;
+            ctrl.totalDistance = 0;
+            ctrl.totalKudos = 0;
+            ctrl.totalComments = 0;
+        }
 
         // Run this after changing selected race
         function addStats() {
@@ -190,8 +207,18 @@
 
         ctrl.nextRace = function () {
             if (ctrl.selectedRace < ctrl.raceList.length - 1) {
+                // Spin until stream data is available for next race
+                if (!angular.isDefined(ctrl.raceList[ctrl.selectedRace +1].stream_data)) {
+                    ctrl.isLoadingRaceDetails = true;
+                    $interval(function () {
+                    }, 500, 1).then(ctrl.nextRace);
+                    return;
+                }
+                ctrl.isLoadingRaceDetails = false;
+
                 ctrl.selectedRace++;
                 addStats();
+                getNextSetOfRaceData();
                 animateIntroWait();
             } else {
                 ctrl.finishedAnimation = true;

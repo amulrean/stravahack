@@ -20,6 +20,9 @@
                 Replay
             </md-button>
             <div layout="column" layout-align="space-around center" class="md-padding" flex="20">
+                <a ng-href="https://www.strava.com/activities/{{ $ctrl.raceList[$ctrl.selectedRace].id }}">
+                    View Activity on Strava
+                </a>
                 <p ng-if="$ctrl.raceList[$ctrl.selectedRace].start_date_local">
                     Date: <span
                         class="md-title">{{ $ctrl.raceList[$ctrl.selectedRace].start_date_local | date : 'longDate' }}</span>
@@ -31,7 +34,9 @@
             </div>
             <div layout="column" layout-align="center center" flex>
                 <h1 ng-animate-swap="$ctrl.selectedRace" class="slide md-display-2">
-                    {{ $ctrl.raceList[$ctrl.selectedRace].name }}</h1></div>
+                    {{ $ctrl.raceList[$ctrl.selectedRace].name }}
+                </h1>
+            </div>
             <div layout="column" layout-align="space-around center" class="md-padding" flex="20">
                 <p ng-if="$ctrl.raceList[$ctrl.selectedRace].distance">
                     Distance: <span class="md-title">{{ $ctrl.raceList[$ctrl.selectedRace].distance }}</span> miles
@@ -50,7 +55,7 @@
         <div layout="row" layout-align="space-around center" class="md-padding" flex="20">
             <p class="md-title" ng-if="$ctrl.totalActivities > 0">Training Totals:</p>
             <p class="md-headline" ng-if="$ctrl.totalActivities > 0"><b class="md-display-2">
-                {{ $ctrl.totalActivities }}</b> Activities</p>
+                {{ $ctrl.totalActivities }} </b> / {{ $ctrl.raceList.length }} Activities</p>
             <p class="md-headline" ng-if="$ctrl.totalDistance > 0"><b class="md-display-2">{{ $ctrl.totalDistance }}</b>
                 Miles</p>
             <p class="md-headline" ng-if="$ctrl.totalKudos > 0"><b class="md-display-2">{{ $ctrl.totalKudos }}</b> Kudos

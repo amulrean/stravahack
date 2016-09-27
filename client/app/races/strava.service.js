@@ -154,12 +154,12 @@
             }
         }
 
-        function activityData(activityIds) {
+        function activityData(activity) {
             return $http.get('api/v1/activity-data/?',
                 {
                     params: {
                         access_token: $cookies.get(stravaService.STRAVA_TOKEN_KEY),
-                        activity_ids: JSON.stringify(activityIds)
+                        activity: JSON.stringify(activity)
                     }
                 })
                 .then(listSuccess)

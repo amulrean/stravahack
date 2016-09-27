@@ -109,30 +109,35 @@ def activity_data(request):
     client = Client(access_token)
 
     # Decode json string of ids sent by angular
-    activity_ids = json.loads(request.query_params.get('activity_ids'))
+    activity = json.loads(request.query_params.get('activity'))
 
-    resp = {}
+    resp = {
+        'id': activity['id']
+    }
 
-    for activity_id in activity_ids:
+    # stream_types = ['time', 'latlng', 'altitude', 'heartrate', 'temp', ]
+    stream_types = ['latlng']
+    try:
+        streams = client.get_activity_streams(activity['id'], types=stream_types, resolution='low')
+    except:
+        streams = {}
 
-        # stream_types = ['time', 'latlng', 'altitude', 'heartrate', 'temp', ]
-        stream_types = ['latlng']
-        try:
-            streams = client.get_activity_streams(activity_id, types=stream_types, resolution='low')
-        except:
-            # found activity with no lat lngs
-            continue
+    stream_data = {}
 
-        stream_data = {}
+    # Get all available stream types listed above
+    for stream_type in stream_types:
+        if stream_type in streams.keys():
+            stream_data[stream_type] = streams[stream_type].data
 
-        # Get all available stream types listed above
-        for stream_type in stream_types:
-            if stream_type in streams.keys():
-                stream_data[stream_type] = streams[stream_type].data
+    # Distance seems to be a seprate stream
+    if 'distance' in streams.keys():
+        stream_data['distance'] = streams['distance'].data
 
-        kudos = []
+    kudos = []
 
-        activity_kudos = client.get_activity_kudos(activity_id=activity_id)
+    if int(activity['kudos_count']) > 0:
+
+        activity_kudos = client.get_activity_kudos(activity_id=activity['id'])
 
         if activity_kudos is not None:
             for kudo in activity_kudos:
@@ -140,9 +145,10 @@ def activity_data(request):
                               'lastname': kudo.lastname,
                               'profile': kudo.profile})
 
-        comments = []
+    comments = []
 
-        activity_comments = client.get_activity_comments(activity_id=activity_id)
+    if int(activity['comment_count']) > 0:
+        activity_comments = client.get_activity_comments(activity_id=activity['id'])
 
         if activity_comments is not None:
             for comment in activity_comments:
@@ -150,16 +156,11 @@ def activity_data(request):
                                  'lastname': comment.athlete.lastname,
                                  'profile': comment.athlete.profile,
                                  'text': comment.text})
-
-        # Distance seems to be a seprate stream
-        if 'distance' in streams.keys():
-            stream_data['distance'] = streams['distance'].data
-
-        resp[activity_id] = {
-            'id': activity_id,
-            'comments': comments,
-            'kudos': kudos,
-            'stream_data': stream_data,
-        }
+    resp = {
+        'id': activity['id'],
+        'comments': comments,
+        'kudos': kudos,
+        'stream_data': stream_data,
+    }
 
     return Response(resp)

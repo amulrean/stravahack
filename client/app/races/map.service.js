@@ -244,9 +244,16 @@
         }
 
         function introStartCircle(mapObject, raceObject) {
-            var pathLatLngs = angular.copy(raceObject.stream_data.latlng);
-            return $interval(function () {
+            if (angular.equals(mapObject.paths['selectedRace'].latlngs,[0, 0]))
+            {
+                var pathLatLngs = angular.copy(raceObject.stream_data.latlng);
                 mapObject.paths['selectedRace'].latlngs = [pathLatLngs[0][0], pathLatLngs[0][1]];
+            }
+
+            mapObject.paths['selectedRace'].radius = 200;
+
+            return $interval(function () {
+
                 var oldRadius = mapObject.paths['selectedRace'].radius;
                 mapObject.paths['selectedRace'].radius = oldRadius - 1;
             }, 5, 180)
@@ -254,15 +261,17 @@
 
         function raceRouteDisplay(mapObject, raceObject) {
 
-            var pathLatLngs = angular.copy(raceObject.stream_data.latlng);
-
+            var countToDisplay = raceObject.stream_data.latlng.length - mapObject.paths['raceDetailRoute'].latlngs.length;
+            if (countToDisplay <=0 ) {
+                return $interval(function () {}, 0, 1);
+            }
             return $interval(function () {
-                var currentLatlon = pathLatLngs.shift();
+                var currentLatlon = raceObject.stream_data.latlng[mapObject.paths['raceDetailRoute'].latlngs.length];
                 var lat = currentLatlon[0];
                 var lng = currentLatlon[1];
                 mapObject.paths['raceDetailRoute'].latlngs.push({lat: lat, lng: lng});
                 mapObject.paths['selectedRace'].latlngs = [lat, lng];
-            }, 50, pathLatLngs.length);
+            }, 50, countToDisplay);
         }
 
         function postRouteWait() {
