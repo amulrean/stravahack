@@ -143,6 +143,9 @@
 
         function getDefaultMapObject() {
             var defaultMapObject = {
+                defaults: {
+                    dragging: false,
+                },
                 center: {},
                 layers: {
                     baselayers: {},
@@ -153,8 +156,7 @@
                 paths: {},
                 events: {
                     map: {
-                        enable: ['moveend', 'popupopen'],
-                        logic: 'emit'
+                        enable: ['moveend', 'popupopen']
                     },
                     marker: {
                         enable: [],

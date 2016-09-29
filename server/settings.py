@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+from settings_secret import SERVER_ALLOWED_HOSTS
 
 MODE = 'dev'
 
@@ -27,7 +28,12 @@ SECRET_KEY = 'gp65&5c8wmb(9w)*u=m8l=5%g^zq7bnn-7wt&u%tb@l%(i=cm*'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1'
+]
+
+ALLOWED_HOSTS.append(SERVER_ALLOWED_HOSTS)
 
 
 # Application definition

@@ -11,9 +11,9 @@
             controller: RaceMapController
         });
 
-    RaceMapController.$inject = ['mapService', '$scope'];
+    RaceMapController.$inject = ['mapService', '$scope', '$mdMedia'];
 
-    function RaceMapController(mapService, $scope) {
+    function RaceMapController(mapService, $scope, $mdMedia) {
         var ctrl = this;
 
         ctrl.initialBoundsSet = false;
@@ -22,6 +22,11 @@
 
             // Build Leaflet Map Object
             ctrl.mapObject = mapService.getDefaultMapObject();
+
+            ctrl.defaults = {
+                    // Disable dragging on mobile
+                    dragging: $mdMedia('(min-width: 840px)'),
+            };
 
             mapService.addBaseLayer(ctrl.mapObject, 'mapboxRunBikeHike', mapService.baselayers.mapboxRunBikeHike);
             mapService.addBaseLayer(ctrl.mapObject, 'openStreetMap', mapService.baselayers.openStreetMap);

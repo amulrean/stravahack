@@ -12,8 +12,11 @@
         $locationProvider.hashPrefix('!');
 
         $mdThemingProvider.theme('default')
-            .primaryPalette('deep-orange')
-            .accentPalette('blue');
+            .primaryPalette('orange', {
+                'default': '900',
+            })
+            .accentPalette('blue')
+            .warnPalette('teal');
 
         $mdThemingProvider.theme('dark-grey').backgroundPalette('grey').dark();
 

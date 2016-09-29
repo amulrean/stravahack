@@ -13,14 +13,14 @@
     </div>
 
     <div layout="column" ng-if="!$ctrl.isAuthenticated" layout-align="center center">
-        <h3>Authorize with Strava to Continue</h3>
+        <h3>Authorize with your Strava account to continue</h3>
         <md-button aria-label="Authenticate Strava"
                    ng-href="{{ $ctrl.authUrl }}"
                    ng-if="!$ctrl.isAuthenticated"
         >
             <img class="logo-image" src="static/assets/ConnectWithStrava@2x.png">
         </md-button>
-        <p>Or watch...</p>
+        <p>Or watch a build up to the 2015 Marine Corps Marathon...</p>
         <md-button class="md-raised md-warn" aria-label="Authenticate Strava" ng-click="$ctrl.demoMode()">
             Demo Mode
         </md-button>
