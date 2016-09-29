@@ -26,7 +26,7 @@
                 template: "<strava-welcome layout='row' layout-align=' center' flex></strava-welcome>"
             })
             .state('visualize', {
-                url: "/visualize?activityType&startDate&endDate",
+                url: "/visualize?activityType&startDate&endDate&demo",
                 template: "<race-home layout='column' flex></race-home>"
             })
             .state('stravaAuthentication', {

@@ -1,4 +1,6 @@
 import json
+import os
+from server.settings import BASE_DIR
 
 from django.http import HttpResponseRedirect
 from rest_framework.decorators import api_view
@@ -51,6 +53,7 @@ def get_athlete_profile(request):
     access_token = request.query_params.get('access_token')
     client = Client(access_token)
     profile = client.protocol.get('/athlete')
+
     return Response(profile)
 
 
@@ -86,7 +89,7 @@ def activity_search(request):
             'description': activity.description,
             'type': activity.type,
             'moving_time': moving_time_minutes,
-            'start_date_local': activity.start_date_local,
+            'start_date_local': str(activity.start_date_local),
             'distance': distance_miles,
             'comment_count': activity.comment_count,
             'kudos_count': activity.kudos_count,
@@ -99,6 +102,8 @@ def activity_search(request):
             'location_country': activity.location_country,
         })
 
+    # with open(os.path.join(BASE_DIR, 'server/apps/strava/demo/activity_search.json'), "w") as outfile:
+    #     json.dump(resp, outfile)
     return Response(reversed(resp))
 
 
@@ -162,5 +167,8 @@ def activity_data(request):
         'kudos': kudos,
         'stream_data': stream_data,
     }
+
+    # with open(os.path.join(BASE_DIR, 'server/apps/strava/demo/' + str(activity['id']) + '.json'), "w") as outfile:
+    #     json.dump(resp, outfile)
 
     return Response(resp)

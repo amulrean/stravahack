@@ -222,16 +222,19 @@
             };
         }
 
-        function setRaceOutBounds(mapObject, raceObj) {
+        function setRaceOutBounds(mapObject, raceObject) {
             var outsideBoundsLatLongArray = [[180, 180], [-180, -180]];
 
-            var pathLatLngs = angular.copy(raceObj.stream_data.latlng);
+            if (angular.isDefined(raceObject.stream_data.latlng)) {
 
-            for (var latlonId in pathLatLngs) {
-                var currentLatlon = pathLatLngs[latlonId];
-                var lat = currentLatlon[0];
-                var lng = currentLatlon[1];
-                extendBoundsIfNeeded(outsideBoundsLatLongArray, lat, lng);
+                var pathLatLngs = angular.copy(raceObject.stream_data.latlng);
+
+                for (var latlonId in pathLatLngs) {
+                    var currentLatlon = pathLatLngs[latlonId];
+                    var lat = currentLatlon[0];
+                    var lng = currentLatlon[1];
+                    extendBoundsIfNeeded(outsideBoundsLatLongArray, lat, lng);
+                }
             }
             var routeBounds = leafletBoundsHelpers.createBoundsFromArray(outsideBoundsLatLongArray);
             updateBounds(mapObject, routeBounds);
@@ -244,10 +247,11 @@
         }
 
         function introStartCircle(mapObject, raceObject) {
-            if (angular.equals(mapObject.paths['selectedRace'].latlngs,[0, 0]))
-            {
-                var pathLatLngs = angular.copy(raceObject.stream_data.latlng);
-                mapObject.paths['selectedRace'].latlngs = [pathLatLngs[0][0], pathLatLngs[0][1]];
+            if (angular.isDefined(raceObject.stream_data.latlng)) {
+                if (angular.equals(mapObject.paths['selectedRace'].latlngs, [0, 0])) {
+                    var pathLatLngs = angular.copy(raceObject.stream_data.latlng);
+                    mapObject.paths['selectedRace'].latlngs = [pathLatLngs[0][0], pathLatLngs[0][1]];
+                }
             }
 
             mapObject.paths['selectedRace'].radius = 200;
@@ -260,18 +264,26 @@
         }
 
         function raceRouteDisplay(mapObject, raceObject) {
+            if (angular.isDefined(raceObject.stream_data.latlng)) {
 
-            var countToDisplay = raceObject.stream_data.latlng.length - mapObject.paths['raceDetailRoute'].latlngs.length;
-            if (countToDisplay <=0 ) {
-                return $interval(function () {}, 0, 1);
+                var countToDisplay = raceObject.stream_data.latlng.length - mapObject.paths['raceDetailRoute'].latlngs.length;
+                if (countToDisplay <= 0) {
+                    return $interval(function () {
+                    }, 0, 1);
+                }
+                return $interval(function () {
+                    var currentLatlon = raceObject.stream_data.latlng[mapObject.paths['raceDetailRoute'].latlngs.length];
+                    var lat = currentLatlon[0];
+                    var lng = currentLatlon[1];
+                    mapObject.paths['raceDetailRoute'].latlngs.push({lat: lat, lng: lng});
+                    mapObject.paths['selectedRace'].latlngs = [lat, lng];
+                }, 50, countToDisplay);
+            } else {
+                return $interval(function () {
+                    var oldRadius = mapObject.paths['selectedRace'].radius;
+                    mapObject.paths['selectedRace'].radius = oldRadius + 1;
+                }, 10, 180);
             }
-            return $interval(function () {
-                var currentLatlon = raceObject.stream_data.latlng[mapObject.paths['raceDetailRoute'].latlngs.length];
-                var lat = currentLatlon[0];
-                var lng = currentLatlon[1];
-                mapObject.paths['raceDetailRoute'].latlngs.push({lat: lat, lng: lng});
-                mapObject.paths['selectedRace'].latlngs = [lat, lng];
-            }, 50, countToDisplay);
         }
 
         function postRouteWait() {

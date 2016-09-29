@@ -12,7 +12,7 @@
         </div>
     </div>
 
-    <div layout="column" ng-if="!$ctrl.isAuthenticated" layout="column" layout-align="center center">
+    <div layout="column" ng-if="!$ctrl.isAuthenticated" layout-align="center center">
         <h3>Authorize with Strava to Continue</h3>
         <md-button aria-label="Authenticate Strava"
                    ng-href="{{ $ctrl.authUrl }}"
@@ -20,6 +20,11 @@
         >
             <img class="logo-image" src="static/assets/ConnectWithStrava@2x.png">
         </md-button>
+        <p>Or watch...</p>
+        <md-button class="md-raised md-warn" aria-label="Authenticate Strava" ng-click="$ctrl.demoMode()">
+            Demo Mode
+        </md-button>
+
     </div>
     <div layout="column" ng-if="$ctrl.isAuthenticated && $ctrl.profile" flex="80">
         <md-card md-theme="dark-grey" class="md-padding">

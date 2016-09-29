@@ -30,6 +30,7 @@
         function setAuthenticationStatus() {
             ctrl.isAuthenticated = stravaService.getIsAuthenticated();
 
+
             if (!ctrl.isAuthenticated) {
                 stravaService.getAuthUrl().then(function (data) {
                     ctrl.authUrl = data;
@@ -46,9 +47,17 @@
                         stravaService.removeStravaCookie();
                     });
             }
+
+            stravaService.getProfileDemo()
+                .then(function (data) {
+                    ctrl.profileDemo = data;
+                    return ctrl.profileDemo;
+                });
         }
 
-        $scope.$watch(function() { return $cookies.get(stravaService.STRAVA_TOKEN_KEY); }, function(newValue, oldValue) {
+        $scope.$watch(function () {
+            return $cookies.get(stravaService.STRAVA_TOKEN_KEY);
+        }, function (newValue, oldValue) {
             if (newValue !== oldValue) {
                 setAuthenticationStatus();
             }
@@ -62,6 +71,13 @@
                 activityType: ctrl.activityType,
                 startDate: formattedStart,
                 endDate: formattedEnd
+            });
+        };
+
+        ctrl.demoMode = function () {
+
+            $state.go('visualize', {
+                demo: true
             });
         };
     }

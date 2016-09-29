@@ -19,13 +19,13 @@
                        ng-if="$ctrl.finishedAnimation">
                 Replay
             </md-button>
-            <div layout="column" layout-align="space-around center" class="md-padding" flex="20">
+            <div layout="column" layout-align="space-around center" class="md-padding" flex="30">
                 <a ng-href="https://www.strava.com/activities/{{ $ctrl.raceList[$ctrl.selectedRace].id }}">
                     View Activity on Strava
                 </a>
                 <p ng-if="$ctrl.raceList[$ctrl.selectedRace].start_date_local">
-                    Date: <span
-                        class="md-title">{{ $ctrl.raceList[$ctrl.selectedRace].start_date_local | date : 'longDate' }}</span>
+                    <span>Date: </span><span
+                        class="md-title">{{ $ctrl.raceList[$ctrl.selectedRace].start_date_local.substring(0,10) | date : 'longDate' }}</span>
                 </p>
                 <p ng-if="$ctrl.raceList[$ctrl.selectedRace].location_city">
                     Location: <span class="md-title">{{ $ctrl.raceList[$ctrl.selectedRace].location_city }}
@@ -37,7 +37,7 @@
                     {{ $ctrl.raceList[$ctrl.selectedRace].name }}
                 </h1>
             </div>
-            <div layout="column" layout-align="space-around center" class="md-padding" flex="20">
+            <div layout="column" layout-align="space-around center" class="md-padding" flex="30">
                 <p ng-if="$ctrl.raceList[$ctrl.selectedRace].distance">
                     Distance: <span class="md-title">{{ $ctrl.raceList[$ctrl.selectedRace].distance }}</span> miles
                 </p>

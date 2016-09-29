@@ -37,14 +37,19 @@
         ctrl.intervalPromise = undefined;
 
         ctrl.$onInit = function () {
-            if ($stateParams.activityType == null ||
-                $stateParams.startDate == null ||
-                $stateParams.endDate == null || !stravaService.getIsAuthenticated()
-            ) {
-                $state.go('welcome');
-            }
 
-            searchActivities();
+            if ($stateParams.demo) {
+                searchDemoActivities()
+            } else {
+                if ($stateParams.activityType == null ||
+                    $stateParams.startDate == null ||
+                    $stateParams.endDate == null || !stravaService.getIsAuthenticated()
+                ) {
+                    $state.go('welcome');
+                }
+
+                searchActivities();
+            }
         };
 
         function searchActivities() {
@@ -59,16 +64,29 @@
                 .catch(getSearchError);
         }
 
+        function searchDemoActivities() {
+            ctrl.isLoadingList = true;
+            ctrl.isLoadingRaceDetails = true;
+            return stravaService.searchActivitiesDemo()
+                .then(getSearchActivitiesSuccess)
+                .catch(getSearchError);
+        }
+
         function getSearchActivitiesSuccess(data) {
             ctrl.isLoadingList = false;
             if (data && data.length > 0) {
                 ctrl.raceList = data;
                 addStats();
 
-
-                stravaService.activityData(ctrl.raceList[0])
-                    .then(getActivityDataSuccess)
-                    .catch(getSearchError);
+                if ($stateParams.demo) {
+                    stravaService.activityDataDemo(ctrl.raceList[0])
+                        .then(getActivityDataSuccess)
+                        .catch(getSearchError);
+                } else {
+                    stravaService.activityData(ctrl.raceList[0])
+                        .then(getActivityDataSuccess)
+                        .catch(getSearchError);
+                }
 
             } else {
                 $mdToast.show($mdToast.simple().textContent("No Activities found for selected dates."));
@@ -104,9 +122,16 @@
                 var upperLimit = Math.min(ctrl.raceList.length, ctrl.selectedRace + numberOfRaceDataToGet);
                 for (var current = ctrl.selectedRace + 1; current < upperLimit; current++) {
                     if (!angular.isDefined(ctrl.raceList[current].stream_data)) {
-                        stravaService.activityData(ctrl.raceList[current])
-                            .then(getActivityDataBackgroundSuccess)
-                            .catch(getSearchError);
+                        if ($stateParams.demo) {
+                            stravaService.activityDataDemo(ctrl.raceList[current])
+                                .then(getActivityDataBackgroundSuccess)
+                                .catch(getSearchError);
+                        } else {
+                            stravaService.activityData(ctrl.raceList[current])
+                                .then(getActivityDataBackgroundSuccess)
+                                .catch(getSearchError);
+                        }
+
                     }
                 }
             }
@@ -208,7 +233,7 @@
         ctrl.nextRace = function () {
             if (ctrl.selectedRace < ctrl.raceList.length - 1) {
                 // Spin until stream data is available for next race
-                if (!angular.isDefined(ctrl.raceList[ctrl.selectedRace +1].stream_data)) {
+                if (!angular.isDefined(ctrl.raceList[ctrl.selectedRace + 1].stream_data)) {
                     ctrl.isLoadingRaceDetails = true;
                     $interval(function () {
                     }, 500, 1).then(ctrl.nextRace);

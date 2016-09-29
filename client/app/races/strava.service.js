@@ -19,7 +19,10 @@
             removeStravaCookie: removeStravaCookie,
             getProfile: getProfile,
             searchActivities: searchActivities,
-            activityData: activityData
+            activityData: activityData,
+            getProfileDemo: getProfileDemo,
+            searchActivitiesDemo: searchActivitiesDemo,
+            activityDataDemo: activityDataDemo
         };
         return stravaService;
 
@@ -169,7 +172,54 @@
             }
 
             function listError(e) {
-                var message = 'Failed to get strava activities';
+                var message = 'Failed to get strava activity';
+                return stravaErrorHandler(e, message);
+            }
+        }
+
+        function getProfileDemo() {
+            return $http.get('api/v1/demo/profile')
+                .then(getSuccess)
+                .catch(getError);
+            function getSuccess(data) {
+                return data.data;
+            }
+
+            function getError(e) {
+                var message = 'Failed to get Demo Strava Profile';
+                return stravaErrorHandler(e, message);
+            }
+        }
+
+        function searchActivitiesDemo() {
+            return $http.get('api/v1/demo/activity-search')
+                .then(listSuccess)
+                .catch(listError);
+            function listSuccess(data) {
+                return data.data;
+            }
+
+            function listError(e) {
+                var message = 'Failed to get demo strava activities';
+                return stravaErrorHandler(e, message);
+            }
+        }
+
+        function activityDataDemo(activity) {
+            return $http.get('api/v1/demo/activity-data',
+                {
+                    params: {
+                        activity: JSON.stringify(activity)
+                    }
+                })
+                .then(listSuccess)
+                .catch(listError);
+            function listSuccess(data) {
+                return data.data;
+            }
+
+            function listError(e) {
+                var message = 'Failed to get demo strava activity';
                 return stravaErrorHandler(e, message);
             }
         }
