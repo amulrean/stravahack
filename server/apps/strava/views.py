@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from datetime import datetime, timedelta
 
 from stravalib import Client, unithelper, exc
-from server.settings_secret import MY_STRAVA_CLIENT_ID, MY_STRAVA_CLIENT_SECRET, AUTH_REDIRECT_URI
+from server.settings import MY_STRAVA_CLIENT_ID, MY_STRAVA_CLIENT_SECRET, AUTH_REDIRECT_URI
 
 @api_view()
 def get_authorization_url(request):
