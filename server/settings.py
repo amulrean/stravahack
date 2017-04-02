@@ -37,7 +37,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1'
 ]
 
-ALLOWED_HOSTS.push(server_url)
+ALLOWED_HOSTS.append(server_url)
 
 
 # Application definition
