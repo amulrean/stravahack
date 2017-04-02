@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Strava Hackathon",
   "main": "client/app/app.js",
+  "scripts": {
+    "zip": "rm -rf dist && mkdir dist && zip -r dist/upload ."
+  },
   "dependencies": {
     "angular": "1.5.8",
     "angular-animate": "1.5.8",
@@ -23,9 +26,6 @@
     "type": "git",
     "url": "https://github.com/amulrean/stravahack.git"
   },
-  "license": "",
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  }
+  "license": "ISC",
+  "devDependencies": {}
 }

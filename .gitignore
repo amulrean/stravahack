@@ -19,3 +19,10 @@ staticfiles/
 
 # Secrets
 server/settings_secret.py
+
+#Dist
+dist
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
