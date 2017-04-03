@@ -11,11 +11,19 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
-# from settings_secret import SERVER_ALLOWED_HOSTS
-server_url = os.environ['SERVER_ALLOWED_HOST_URL']
-MY_STRAVA_CLIENT_ID = os.environ['MY_STRAVA_CLIENT_ID']
-MY_STRAVA_CLIENT_SECRET = os.environ['MY_STRAVA_CLIENT_SECRET']
-AUTH_REDIRECT_URI = os.environ['AUTH_REDIRECT_URI']
+
+server_url = ''
+if 'SERVER_ALLOWED_HOST_URL' in os.environ:
+    server_url = os.environ['SERVER_ALLOWED_HOST_URL']
+MY_STRAVA_CLIENT_ID = ''
+if 'MY_STRAVA_CLIENT_ID' in os.environ:
+    MY_STRAVA_CLIENT_ID = os.environ['MY_STRAVA_CLIENT_ID']
+MY_STRAVA_CLIENT_SECRET = ''
+if 'MY_STRAVA_CLIENT_SECRET' in os.environ:
+    MY_STRAVA_CLIENT_SECRET = os.environ['MY_STRAVA_CLIENT_SECRET']
+AUTH_REDIRECT_URI = ''
+if 'AUTH_REDIRECT_URI' in os.environ:
+    AUTH_REDIRECT_URI = os.environ['AUTH_REDIRECT_URI']
 
 MODE = 'dev'
 
